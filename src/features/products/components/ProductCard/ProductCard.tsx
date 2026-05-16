@@ -27,7 +27,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const router = useRouter();
     const pathname = usePathname();
     const { toggleWishlist, isInWishlist } = useWishlistStore();
-    const { addToCart, loading: cartLoading } = useCartStore();
+    const { addToCart, loading: cartLoading, setDrawerOpen } = useCartStore();
     const { isAuthenticated } = useAuthStore();
 
     const rawId = product.product_id || product.id || (product.product && (product.product.product_id || product.product.id));
