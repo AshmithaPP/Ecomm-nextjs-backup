@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useOrderStore } from '@/store/orderStore';
 import { IMAGE_BASE } from '@/config/api';
 import sareeImageFallback from 'assets/images/silk/collection1.png';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify';
 import Link from 'next/link';
 
 const TrackOrderPage = () => {
