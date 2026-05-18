@@ -120,7 +120,7 @@
     color: #2C2C2C;
     font-family: 'Jost', sans-serif;
     font-weight: 400;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 100%;
     letter-spacing: 0%;
     transition: all 0.3s ease;
@@ -129,7 +129,7 @@
 
 .nav-link.active {
     color: #A42829;
-    font-weight: 600;
+    font-weight: 500;
     /* Matching the bolder look in image */
 }
 

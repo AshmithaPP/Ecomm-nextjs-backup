@@ -153,16 +153,91 @@ const OrderConfirmationPage = () => {
                   <div className="order-conf-arrival-date" style={{ textTransform: 'capitalize' }}>{currentOrder.status}</div>
                 </div>
 
-                {currentOrder.tracking_id && (
-                  <div className="order-conf-shipping-info mt-3 p-3" style={{ background: '#f8f9fa', borderRadius: '8px' }}>
-                    <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#800000', marginBottom: '5px' }}>SHIPPING INFO</div>
-                    <div style={{ fontSize: '13px' }}><strong>Courier:</strong> {currentOrder.courier_name}</div>
-                    <div style={{ fontSize: '13px' }}><strong>Tracking ID:</strong> {currentOrder.tracking_id}</div>
-                    {currentOrder.estimated_delivery_date && (
-                        <div style={{ fontSize: '13px' }}><strong>Est. Delivery:</strong> {new Date(currentOrder.estimated_delivery_date).toLocaleDateString()}</div>
+                <div className="order-conf-shipping-info mt-3 p-3" style={{ background: '#fff', borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#800000', marginBottom: '12px', borderBottom: '1px solid #f1f5f9', paddingBottom: '6px' }}>🚚 SHIPMENT INFORMATION</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', color: '#64748b' }}>Shipment Status</span>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        padding: '3px 8px',
+                        borderRadius: '12px',
+                        textTransform: 'capitalize',
+                        backgroundColor: 
+                          currentOrder.shipment_status?.toLowerCase() === 'delivered' ? '#dcfce7' :
+                          currentOrder.shipment_status?.toLowerCase() === 'shipped' ? '#fef3c7' :
+                          currentOrder.shipment_status?.toLowerCase() === 'out for delivery' ? '#e0f2fe' :
+                          currentOrder.shipment_status?.toLowerCase() === 'packed' ? '#f3e8ff' : '#f1f5f9',
+                        color: 
+                          currentOrder.shipment_status?.toLowerCase() === 'delivered' ? '#15803d' :
+                          currentOrder.shipment_status?.toLowerCase() === 'shipped' ? '#b45309' :
+                          currentOrder.shipment_status?.toLowerCase() === 'out for delivery' ? '#0369a1' :
+                          currentOrder.shipment_status?.toLowerCase() === 'packed' ? '#6b21a8' : '#475569',
+                      }}>
+                        {currentOrder.shipment_status || 'Pending'}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '13px', color: '#64748b' }}>Courier Name</span>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{currentOrder.courier_name || 'Not assigned yet'}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '13px', color: '#64748b' }}>Tracking ID</span>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#1e293b' }}>{currentOrder.tracking_id || 'Not available yet'}</span>
+                    </div>
+
+                    {currentOrder.shipped_at && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: '13px', color: '#64748b' }}>Shipped At</span>
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>
+                          {new Date(currentOrder.shipped_at).toLocaleString()}
+                        </span>
+                      </div>
                     )}
+
+                    {currentOrder.estimated_delivery_date && (
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: '13px', color: '#64748b' }}>Est. Delivery</span>
+                        <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>
+                          {new Date(currentOrder.estimated_delivery_date).toLocaleDateString()}
+                        </span>
+                      </div>
+                    )}
+
+                    <button 
+                      disabled={!currentOrder.tracking_id}
+                      onClick={() => {
+                        if (currentOrder.tracking_id) {
+                          window.open(currentOrder.tracking_url || 'https://www.stcourier.com/track/shipment', '_blank');
+                        }
+                      }}
+                      style={{
+                        marginTop: '6px',
+                        width: '100%',
+                        padding: '10px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        backgroundColor: currentOrder.tracking_id ? '#800000' : '#e2e8f0',
+                        color: currentOrder.tracking_id ? '#fff' : '#94a3b8',
+                        fontWeight: 600,
+                        fontSize: '12px',
+                        cursor: currentOrder.tracking_id ? 'pointer' : 'not-allowed',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        transition: 'all 0.2s',
+                      }}
+                    >
+                      {currentOrder.tracking_id ? 'Track Order ↗' : 'Track Order (Available once shipped)'}
+                    </button>
+
                   </div>
-                )}
+                </div>
 
                 {/* Tracking Timeline */}
                 {currentOrder.timeline?.length > 0 && (
@@ -189,6 +264,26 @@ const OrderConfirmationPage = () => {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+
+                {!currentOrder.user_id && (
+                  <div className="mt-4 p-3 rounded" style={{ background: '#f8fafc', border: '1px dashed #cbd5e1' }}>
+                    <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#800000', marginBottom: '8px' }}>📋 GUEST CHECKOUT INFO</div>
+                    <p style={{ fontSize: '12.5px', color: '#475569', lineHeight: '1.5', margin: 0 }}>
+                      Since you completed checkout as a guest, please save these details to track your order:
+                    </p>
+                    <div className="mt-2" style={{ fontSize: '12.5px', color: '#1e293b' }}>
+                      <strong>Order Number:</strong> #{currentOrder.order_number}<br />
+                      <strong>Phone Number:</strong> {address?.phone}
+                    </div>
+                    <button
+                      onClick={() => router.push(`/track-order?orderId=${currentOrder.order_number}&phone=${address?.phone}`)}
+                      className="btn btn-sm mt-3 w-100 py-2 text-white fw-bold"
+                      style={{ background: '#800000', borderRadius: '6px', fontSize: '12px', border: 'none' }}
+                    >
+                      Go to Live Tracking Page ↗
+                    </button>
                   </div>
                 )}
 

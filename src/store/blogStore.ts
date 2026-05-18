@@ -19,6 +19,14 @@ export interface BlogItem {
     updated_at?: string;
 }
 
+export interface BlogHeroSettings {
+    over_title: string;
+    title: string;
+    subtitle: string;
+    button_text: string;
+    image_url: string;
+}
+
 export interface BlogPagination {
     total: number;
     page: number;
@@ -32,6 +40,7 @@ interface BlogState {
     loading: boolean;
     error: string | null;
     pagination: BlogPagination;
+    hero: BlogHeroSettings | null;
     fetchBlogs: (params?: { page?: number; limit?: number; category?: string }) => Promise<void>;
     fetchBlogBySlug: (slug: string) => Promise<void>;
 }
@@ -43,6 +52,7 @@ export const useBlogStore = create<BlogState>((set) => ({
     selectedBlog: null,
     loading: false,
     error: null,
+    hero: null,
     pagination: {
         total: 0,
         page: 1,
@@ -64,6 +74,7 @@ export const useBlogStore = create<BlogState>((set) => ({
                 set({ 
                     blogs: result.data, 
                     pagination: result.pagination,
+                    hero: result.hero || null,
                     loading: false 
                 });
             } else {

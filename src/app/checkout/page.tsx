@@ -36,6 +36,7 @@ const CheckoutPage = () => {
     const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
     const [showCouponList, setShowCouponList] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('UPI');
+    const [checkoutMode, setCheckoutMode] = useState('guest');
     
     const [formData, setFormData] = useState({
         fullName: '',
@@ -54,8 +55,8 @@ const CheckoutPage = () => {
     useEffect(() => {
         if (isAuthenticated) {
             fetchAddresses();
-            fetchCart(selectedAddress?.state || formData.state);
         }
+        fetchCart(selectedAddress?.state || formData.state);
     }, [isAuthenticated, fetchAddresses, fetchCart]);
 
     // Automatically select default address if available
@@ -67,10 +68,8 @@ const CheckoutPage = () => {
     }, [addresses, selectedAddress]);
 
     useEffect(() => {
-        if (isAuthenticated) {
-            fetchActiveCoupons().then(setAvailableCoupons);
-        }
-    }, [isAuthenticated, fetchActiveCoupons]);
+        fetchActiveCoupons().then(setAvailableCoupons);
+    }, [fetchActiveCoupons]);
 
     // Summary calculations
     const subtotal = parseFloat(String(cartSummary.subtotal)) || 0;
@@ -151,7 +150,9 @@ const CheckoutPage = () => {
             payload.address_id = selectedAddress.address_id;
         } else {
             // Validate form data for new address
-            const requiredFields = ['fullName', 'mobileNumber', 'email', 'address', 'city', 'state', 'pincode'];
+            const requiredFields = isAuthenticated 
+                ? ['fullName', 'mobileNumber', 'email', 'address', 'city', 'state', 'pincode']
+                : ['fullName', 'mobileNumber', 'address', 'city', 'state', 'pincode'];
             const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
 
             if (missingFields.length > 0) {
@@ -208,8 +209,7 @@ const CheckoutPage = () => {
     }
 
     return (
-        <ProtectedRoute>
-            <div className="checkout-container py-5">
+        <div className="checkout-container py-5">
                 <div className="checkout-grid">
                     {/* Left Column */}
                     <div className="left-side-form">
@@ -222,6 +222,47 @@ const CheckoutPage = () => {
                                     </button>
                                 )}
                             </div>
+
+                            {!isAuthenticated && (
+                                <div className="checkout-mode-selector mb-4 p-3 rounded" style={{ background: '#f8f9fa', border: '1px solid #e9ecef' }}>
+                                    <h5 className="fw-bold mb-3" style={{ fontSize: '0.95rem', color: '#333' }}>Checkout Options</h5>
+                                    <div className="d-flex flex-wrap gap-4">
+                                        <label className="d-flex align-items-center gap-2" style={{ cursor: 'pointer' }}>
+                                            <input 
+                                                type="radio" 
+                                                name="checkoutMode" 
+                                                value="guest" 
+                                                checked={checkoutMode === 'guest'} 
+                                                onChange={() => setCheckoutMode('guest')}
+                                                style={{ accentColor: '#A42829' }}
+                                            />
+                                            <span style={{ fontSize: '0.9rem', fontWeight: checkoutMode === 'guest' ? '600' : '400' }}>Continue as Guest</span>
+                                        </label>
+                                        <label className="d-flex align-items-center gap-2" style={{ cursor: 'pointer' }} onClick={() => router.push(`/login?redirect=/checkout`)}>
+                                            <input 
+                                                type="radio" 
+                                                name="checkoutMode" 
+                                                value="login" 
+                                                checked={checkoutMode === 'login'} 
+                                                readOnly
+                                                style={{ accentColor: '#A42829' }}
+                                            />
+                                            <span style={{ fontSize: '0.9rem' }}>Login to Account</span>
+                                        </label>
+                                        <label className="d-flex align-items-center gap-2" style={{ cursor: 'pointer' }} onClick={() => router.push(`/register?redirect=/checkout`)}>
+                                            <input 
+                                                type="radio" 
+                                                name="checkoutMode" 
+                                                value="register" 
+                                                checked={checkoutMode === 'register'} 
+                                                readOnly
+                                                style={{ accentColor: '#A42829' }}
+                                            />
+                                            <span style={{ fontSize: '0.9rem' }}>Create new Account</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            )}
 
                             {showAddressList ? (
                                 <div className="saved-addresses-list">
@@ -304,7 +345,7 @@ const CheckoutPage = () => {
                                                     className="custom-input full-width"
                                                     value={formData.email}
                                                     onChange={handleInputChange}
-                                                    required
+                                                    required={isAuthenticated}
                                                 />
                                             </div>
                                         </div>
@@ -405,19 +446,21 @@ const CheckoutPage = () => {
                                         </div>
                                     </div>
 
-                                    <div className="d-flex align-items-center mt-3">
-                                        <input
-                                            type="checkbox"
-                                            id="saveAddress"
-                                            name="saveAddress"
-                                            className="custom-checkbox"
-                                            checked={formData.saveAddress}
-                                            onChange={handleInputChange}
-                                        />
-                                        <label htmlFor="saveAddress" className="checkbox-label ms-2">
-                                            Save this address for faster checkouts
-                                        </label>
-                                    </div>
+                                    {isAuthenticated && (
+                                        <div className="d-flex align-items-center mt-3">
+                                            <input
+                                                type="checkbox"
+                                                id="saveAddress"
+                                                name="saveAddress"
+                                                className="custom-checkbox"
+                                                checked={formData.saveAddress}
+                                                onChange={handleInputChange}
+                                            />
+                                            <label htmlFor="saveAddress" className="checkbox-label ms-2">
+                                                Save this address for faster checkouts
+                                            </label>
+                                        </div>
+                                    )}
                                 </form>
                             )}
                         </section>
@@ -725,7 +768,6 @@ const CheckoutPage = () => {
                     </div>
                 </div>
             </div>
-        </ProtectedRoute>
     );
 };
 

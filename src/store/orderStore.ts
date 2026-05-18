@@ -16,6 +16,7 @@ interface OrderState {
     fetchOrders: (page?: number, limit?: number) => Promise<void>;
     cancelOrder: (orderId: string) => Promise<any>;
     trackOrder: (orderId: string) => Promise<any>;
+    trackGuestOrder: (orderId: string, phone: string) => Promise<any>;
 }
 
 
@@ -28,12 +29,13 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     getHeaders: () => {
         const { token } = useAuthStore.getState();
         const { guestId } = useCartStore.getState();
-        return {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'x-guest-id': guestId
-            }
+        const headers: any = {
+            'x-guest-id': guestId || null
         };
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
+        return { headers };
     },
 
     // 1. Create Internal Order
@@ -117,6 +119,19 @@ export const useOrderStore = create<OrderState>((set, get) => ({
         } catch (error) {
             set({ loading: false, error: 'Tracking failed' });
             return { success: false, message: 'Tracking failed' };
+        }
+    },
+
+    trackGuestOrder: async (orderId, phone) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await axios.get(`${API_BASE}/orders/track?orderId=${orderId}&phone=${phone}`, get().getHeaders());
+            set({ loading: false });
+            return { success: true, data: response.data };
+        } catch (error: any) {
+            const msg = error.response?.data?.message || 'Tracking failed';
+            set({ loading: false, error: msg });
+            return { success: false, message: msg };
         }
     }
 }));
