@@ -83,6 +83,31 @@ const ProductInfo = ({ product }: any) => {
         if (variant) setSelectedVariant(variant.variant_id);
     };
 
+    const handleWhatsappShare = () => {
+        // Construct the live URL using the production domain instead of localhost
+        const liveUrl = typeof window !== 'undefined'
+            ? `https://www.silkcurator.com${window.location.pathname}`
+            : `https://www.silkcurator.com/products/${product.slug || ''}`;
+
+        const discountPercent = currentPrice?.mrp && parseFloat(currentPrice.mrp) > parseFloat(currentPrice.selling_price)
+            ? Math.round(((parseFloat(currentPrice.mrp) - parseFloat(currentPrice.selling_price)) / parseFloat(currentPrice.mrp)) * 100)
+            : 0;
+
+        const discountText = discountPercent > 0 
+            ? `Get up to ${discountPercent}% OFF on your first order. Also grab extra discount on exclusive handloom sarees!`
+            : 'Get the best price and pure silk assurance on exclusive handloom sarees!';
+
+        const message = `Hey, check out this product on The Silk Curator!
+
+${discountText}
+
+${liveUrl}`;
+
+        // Meesho/Amazon/Flipkart style share URL (without a hardcoded phone number)
+        const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+        window.open(whatsappUrl, "_blank");
+    };
+
     return (
         <div className="product-info-wrapper">
             {/* Title & Badge */}
@@ -246,9 +271,14 @@ const ProductInfo = ({ product }: any) => {
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     ) : 'Add to Cart'}
                 </button>
-                <button className="btn btn-whatsapp w-100 d-flex justify-content-center align-items-center gap-2" style={{ height: '50px', fontSize: '16px' }}>
+                <button 
+                    type="button"
+                    className="btn btn-whatsapp w-100 d-flex justify-content-center align-items-center gap-2" 
+                    onClick={handleWhatsappShare}
+                    style={{ height: '50px', fontSize: '16px' }}
+                >
                     <img src={typeof whatsappIcon === 'string' ? whatsappIcon : (whatsappIcon as any).src} alt="WhatsApp" width="16" height="24" />
-                    WhatsApp Enquiry
+                    Share on WhatsApp
                 </button>
             </div>
         </div>
