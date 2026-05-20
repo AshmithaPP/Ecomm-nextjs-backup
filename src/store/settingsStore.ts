@@ -10,6 +10,7 @@ interface SettingsState {
     getSiteInfo: () => any;
     getStoreSettings: () => any;
     getBannerSettings: () => any;
+    getFooterSettings: () => any;
 }
 
 const API_BASE_URL = API_BASE;
@@ -33,6 +34,9 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             const data = await response.json();
 
             if (data.success) {
+                if (data.data && data.data.blog_hero) {
+                    delete data.data.blog_hero;
+                }
                 set({ settings: data.data, loading: false });
             } else {
                 set({ error: "Failed to fetch settings", loading: false });
@@ -100,6 +104,35 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             endDate: "",
             startDate: "",
             description: ""
+        };
+    },
+
+    getFooterSettings: () => {
+        const fs = get().settings?.footer_settings;
+        return {
+            about_text: fs?.about_text || "The Silk Curator preserves traditional Kanchipuram weaving guilds, bringing you pure South Indian mulberry silk sarees with authentic gold zari directly from master artisan families.",
+            contact_info: fs?.contact_info || {
+                email: "support@silkcurator.com",
+                phone: "+91 98765 43210",
+                address: "123, Silk Bazaar, Kanchipuram, Tamil Nadu - 631501"
+            },
+            social_links: fs?.social_links || {
+                youtube: "https://youtube.com",
+                facebook: "https://facebook.com",
+                whatsapp: "https://wa.me",
+                instagram: "https://instagram.com"
+            },
+            links_group_1: fs?.links_group_1 || [
+                { path: "/", label: "Home" },
+                { path: "/shop-sarees", label: "Shop Sarees" },
+                { path: "/heritage", label: "Heritage" }
+            ],
+            links_group_2: fs?.links_group_2 || [
+                { path: "/terms", label: "Terms & Conditions" },
+                { path: "/privacy", label: "Privacy Policy" },
+                { path: "/refunds", label: "Refund Policy" }
+            ],
+            copyright_text: fs?.copyright_text || "© 2026 The Silk Curator. All Rights Reserved."
         };
     }
 }));

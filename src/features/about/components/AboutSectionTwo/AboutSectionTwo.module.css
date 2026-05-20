@@ -2,13 +2,13 @@
 
 .aboutSectionWrapper {
     width: 100%;
-    max-width: 1437px; /* layout-width: 1437 */
-    height: 906px; /* height: 906 */
+    max-width: 1437px;
+    height: 906px;
     margin: 0 auto;
-    padding: 128px 40px; /* padding-top: 128px; padding-right: 40px; padding-bottom: 128px; padding-left: 40px; */
+    padding: 128px 40px;
     background: #FFFFFF;
     position: relative;
-    overflow: visible; /* To allow image overlap if needed */
+    overflow: hidden; /* prevent image bleed into adjacent sections */
 }
 
 /* We use a relative container for absolute positioning of children as per specs */
@@ -24,8 +24,8 @@
     position: absolute;
     width: 598.5px;
     height: 748.125px;
-    top: -49.06px; /* top: -49.06px */
-    left: 32px; /* left: 32px */
+    top: 0; /* was -49.06px — that caused the image to bleed into the hero above */
+    left: 32px;
     opacity: 1;
     box-shadow: 0px 8px 10px -6px #0000001A, 0px 20px 25px -5px #0000001A;
     background: #FFFFFF;

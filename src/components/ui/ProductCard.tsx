@@ -38,11 +38,6 @@ const ProductCard = ({ product }: { product: any }) => {
 
         if (isOutOfStock) return;
 
-        if (!isAuthenticated) {
-            router.push(`/login?redirect=${pathname}`);
-            return;
-        }
-
         const variantId = product.variant_id || product.default_variant_id || (product.variants && product.variants[0]?.variant_id) || null;
         const productIdToSend = (typeof pid === 'string' && !isNaN(pid as any)) ? Number(pid) : pid;
 

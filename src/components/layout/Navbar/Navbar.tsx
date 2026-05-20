@@ -14,12 +14,13 @@ import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { LogOut, ChevronDown } from 'lucide-react';
-import { IMAGE_BASE } from '@/config/api';
+import { IMAGE_BASE, API_BASE } from '@/config/api';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
+    const [navItems, setNavItems] = useState<any[]>([]);
     
     const { items: wishlistItems, fetchWishlist } = useWishlistStore();
     const { cart, fetchCart, setDrawerOpen } = useCartStore();
@@ -35,6 +36,21 @@ const Navbar = () => {
         fetchCart();
         fetchWishlist();
     }, [fetchSettings, fetchCart, fetchWishlist]);
+
+    useEffect(() => {
+        const fetchNav = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/navigation`);
+                const result = await response.json();
+                if (result.success && Array.isArray(result.data)) {
+                    setNavItems(result.data);
+                }
+            } catch (error) {
+                console.error('Error fetching dynamic navigation:', error);
+            }
+        };
+        fetchNav();
+    }, []);
 
     const IMAGE_BASE_URL = IMAGE_BASE;
     const logoSrc = siteInfo.site_logo
@@ -96,18 +112,31 @@ const Navbar = () => {
                 {/* Desktop Nav */}
                 <div className="nav-inner-content">
                     <div className={`nav-links${menuOpen ? ' show' : ''}`}>
-                        <Link href="/" className={`nav-link${isActive('/') ? ' active' : ''}`}>Home</Link>
-                        <Link href="/products" className={`nav-link${isActive('/products') ? ' active' : ''}`}>Shop Sarees</Link>
-                        <Link href="/occasions" className={`nav-link${isActive('/occasions') ? ' active' : ''}`}>Occasions</Link>
-                        <Link href="/heritage" className={`nav-link${isActive('/heritage') ? ' active' : ''}`}>Heritage</Link>
-                        <Link href="/blog" className={`nav-link${isActive('/blog') ? ' active' : ''}`}>Blog</Link>
-                        <Link href="/contact" className={`nav-link${isActive('/contact') ? ' active' : ''}`}>Contact Us</Link>
-                        <Link href="/about" className={`nav-link${isActive('/about') ? ' active' : ''}`}>About Us</Link>
+                        {navItems.length > 0 ? (
+                            navItems.map((item) => (
+                                <Link 
+                                    key={item.menu_id}
+                                    href={item.route_path} 
+                                    target={item.open_in_new_tab ? '_blank' : undefined}
+                                    className={`nav-link${isActive(item.route_path) ? ' active' : ''}`}
+                                    onClick={() => setMenuOpen(false)}
+                                >
+                                    {item.title}
+                                </Link>
+                            ))
+                        ) : (
+                            <>
+                                <Link href="/" className={`nav-link${isActive('/') ? ' active' : ''}`}>Home</Link>
+                                <Link href="/products" className={`nav-link${isActive('/products') ? ' active' : ''}`}>Shop Sarees</Link>
+                                <Link href="/occasions" className={`nav-link${isActive('/occasions') ? ' active' : ''}`}>Occasions</Link>
+                                <Link href="/heritage" className={`nav-link${isActive('/heritage') ? ' active' : ''}`}>Heritage</Link>
+                                <Link href="/contact" className={`nav-link${isActive('/contact') ? ' active' : ''}`}>Contact Us</Link>
+                                <Link href="/about" className={`nav-link${isActive('/about') ? ' active' : ''}`}>About Us</Link>
+                                <Link href="/blog" className={`nav-link${isActive('/blog') ? ' active' : ''}`}>Blog</Link>
+                            </>
+                        )}
 
                         <div className="nav-icons mobile-only-icons">
-                            <div className="nav-icon">
-                                <Image src={SearchIcon} alt="Search" width={24} height={24} />
-                            </div>
                             {isAuthenticated ? (
                                 <Link href="/account" className="nav-icon" onClick={() => setMenuOpen(false)}>
                                     <Image src={UserIcon} alt="Profile" width={24} height={24} />
@@ -117,12 +146,14 @@ const Navbar = () => {
                                     <Image src={UserIcon} alt="User" width={24} height={24} />
                                 </Link>
                             )}
-                            <Link href={isAuthenticated ? "/wishlist" : "/login?redirect=/wishlist"} className="nav-icon wishlist-nav-icon">
-                                <i className="bi bi-heart thick-heart"></i>
-                                {wishlistItems.length > 0 && (
-                                    <span className="wishlist-badge">{wishlistItems.length}</span>
-                                )}
-                            </Link>
+                            {isAuthenticated && (
+                                <Link href="/wishlist" className="nav-icon wishlist-nav-icon">
+                                    <i className="bi bi-heart thick-heart"></i>
+                                    {wishlistItems.length > 0 && (
+                                        <span className="wishlist-badge">{wishlistItems.length}</span>
+                                    )}
+                                </Link>
+                            )}
                             <div 
                                 className="nav-icon cart-nav-icon" 
                                 style={{ cursor: 'pointer' }}
@@ -137,9 +168,6 @@ const Navbar = () => {
                     </div>
 
                     <div className="nav-icons desktop-only-icons">
-                        <div className="nav-icon">
-                            <Image src={SearchIcon} alt="Search" width={24} height={24} />
-                        </div>
                         
                         <div className="user-profile-container">
                             {isAuthenticated ? (
@@ -170,12 +198,14 @@ const Navbar = () => {
                             )}
                         </div>
 
-                        <Link href={isAuthenticated ? "/wishlist" : "/login?redirect=/wishlist"} className="nav-icon wishlist-nav-icon">
-                            <i className="bi bi-heart thick-heart"></i>
-                            {wishlistItems.length > 0 && (
-                                <span className="wishlist-badge">{wishlistItems.length}</span>
-                            )}
-                        </Link>
+                        {isAuthenticated && (
+                            <Link href="/wishlist" className="nav-icon wishlist-nav-icon">
+                                <i className="bi bi-heart thick-heart"></i>
+                                {wishlistItems.length > 0 && (
+                                    <span className="wishlist-badge">{wishlistItems.length}</span>
+                                )}
+                            </Link>
+                        )}
                         <div 
                             className="nav-icon cart-nav-icon" 
                             style={{ cursor: 'pointer' }}

@@ -11,6 +11,7 @@ interface ContactHeroProps {
     title?: string;
     subtitle?: string;
     buttonText?: string;
+    buttonLink?: string;
     imageUrl?: string;
 }
 
@@ -19,12 +20,13 @@ const ContactHero = ({
     title = "Timeless Tradition Woven in Silk",
     subtitle = "Celebrating the heritage of authentic Kanchipuram silk sarees crafted by master weavers through generations of sacred geometry and golden threads.",
     buttonText = "Explore Collections",
+    buttonLink,
     imageUrl
 }: ContactHeroProps) => {
     
-    // Fallback to static asset if no external image_url is supplied
-    const resolvedImage = imageUrl 
-        ? (imageUrl.startsWith('http') ? imageUrl : `${IMAGE_BASE}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
+    // Fallback to static asset if no external image_url is supplied or if it points to the default missing blog_hero.png
+    const resolvedImage = (imageUrl && !imageUrl.includes('blog_hero.png'))
+        ? ((imageUrl.startsWith('http') || imageUrl.startsWith('/_next/')) ? imageUrl : `${IMAGE_BASE}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
         : contactus.src;
 
     return (
@@ -35,7 +37,13 @@ const ContactHero = ({
                         <p className="contact_hero_eyebrow">{overTitle}</p>
                         <h1 className="contact_hero_title">{title}</h1>
                         <p className="contact_hero_subtext">{subtitle}</p>
-                        <button className="contact_hero_btn">{buttonText}</button>
+                        {buttonLink ? (
+                            <a href={buttonLink}>
+                                <button className="contact_hero_btn">{buttonText}</button>
+                            </a>
+                        ) : (
+                            <button className="contact_hero_btn">{buttonText}</button>
+                        )}
                     </div>
                     <div className="col-md-6 contact_hero_right d-none d-md-flex">
                         <img 

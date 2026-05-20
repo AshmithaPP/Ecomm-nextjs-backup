@@ -8,6 +8,8 @@ import styles from './page.module.css';
 import { useBlogStore } from '@/store/blogStore';
 import BlogSection from '@/features/home/components/BlogSection/BlogSection';
 import BlogDetailMain from 'assets/images/blog/blog_detail_main.png';
+import ContactHero from 'features/contact/components/ContactHero/ContactHero';
+import blogdetailsHero from 'assets/images/blog/blogdetails-hero.png';
 
 const BlogDetails = () => {
     const params = useParams();
@@ -37,14 +39,13 @@ const BlogDetails = () => {
 
     return (
         <div className={styles.blogDetailsPage}>
-            <header className={styles.heroSection}>
-                <h1 className={styles.title}>
-                    {blog.title}
-                </h1>
-                <p className={styles.subheading}>
-                    {blog.seo_description || blog.excerpt}
-                </p>
-            </header>
+            <ContactHero 
+                overTitle={blog.category ? blog.category.toUpperCase() : "ARTICLE"}
+                title={blog.title}
+                subtitle={blog.seo_description || blog.excerpt}
+                buttonText="Back to Blogs"
+                imageUrl={blogdetailsHero.src}
+            />
 
             <main className={styles.mainContent}>
                 {/* Main Hero Image */}
