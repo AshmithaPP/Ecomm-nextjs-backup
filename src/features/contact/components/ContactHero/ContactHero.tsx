@@ -16,10 +16,10 @@ interface ContactHeroProps {
 }
 
 const ContactHero = ({
-    overTitle = "LEGACY OF THE LOOM",
-    title = "Timeless Tradition Woven in Silk",
-    subtitle = "Celebrating the heritage of authentic Kanchipuram silk sarees crafted by master weavers through generations of sacred geometry and golden threads.",
-    buttonText = "Explore Collections",
+    overTitle = "",
+    title = "",
+    subtitle = "",
+    buttonText = "",
     buttonLink,
     imageUrl
 }: ContactHeroProps) => {

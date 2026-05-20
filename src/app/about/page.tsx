@@ -153,7 +153,16 @@ const AboutPage: React.FC = () => {
             {(isSectionEnabled(pageContent.testimonials_section) || isSectionEnabled(pageContent.testimonial_section)) && <Testimonials />}
             
             {/* Newsletter Section */}
-            {isSectionEnabled(pageContent.newsletter_section) && <NewsletterSection />}
+            {isSectionEnabled(pageContent.newsletter_section) && (
+                <NewsletterSection
+                    dynamicData={{
+                        title: pageContent.newsletter_section?.title,
+                        subtitle: pageContent.newsletter_section?.subtitle,
+                        email_placeholder: pageContent.newsletter_section?.placeholder,
+                        button_text: pageContent.newsletter_section?.button_text
+                    }}
+                />
+            )}
             
             {/* Custom HTML Section */}
             {pageContent.custom_html_section?.html && (

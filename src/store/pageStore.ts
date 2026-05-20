@@ -124,10 +124,54 @@ export interface NarrativeSection {
 
 export interface NewsletterSection {
     is_enabled: boolean;
+    title?: string;
+    subtitle?: string;
+    placeholder?: string;
+    button_text?: string;
 }
 
 export interface TestimonialsSection {
     is_enabled: boolean;
+}
+
+export interface TrustBadgesSection {
+    is_enabled: boolean;
+    badges: Array<{
+        title: string;
+        icon: string;
+    }>;
+}
+
+export interface ContactCard {
+    type: string;
+    title: string;
+    subtitle: string;
+    value: string;
+    action_text: string;
+    action_link: string;
+    icon: string;
+}
+
+export interface ContactCardsSection {
+    section_title: string;
+    cards: ContactCard[];
+}
+
+export interface ContactFormField {
+    name: string;
+    label: string;
+    placeholder: string;
+    type: string;
+    options?: string[];
+    required: boolean;
+}
+
+export interface ContactFormSection {
+    is_enabled: boolean;
+    section_title: string;
+    section_subtitle: string;
+    fields: ContactFormField[];
+    submit_button_text: string;
 }
 
 export interface ThemeSettings {
@@ -180,6 +224,11 @@ export interface PageItem {
     occasions?: Occasion[];
     featured_products_section?: FeaturedProductsSection;
     narrative_section?: NarrativeSection;
+
+    // Contact page sections
+    trust_badges_section?: TrustBadgesSection;
+    contact_cards_section?: ContactCardsSection;
+    contact_form_section?: ContactFormSection;
 }
 
 interface PageState {
@@ -187,6 +236,7 @@ interface PageState {
     loading: Record<string, boolean>;
     errors: Record<string, string | null>;
     fetchPageBySlug: (slug: string) => Promise<PageItem | null>;
+    fetchContactPage: () => Promise<PageItem | null>;
     clearPage: (slug: string) => void;
 }
 
@@ -238,7 +288,8 @@ export const usePageStore = create<PageState>((set, get) => ({
                     'theme_settings', 'newsletter_section', 'testimonial_section',
                     'testimonials_section', 'occasion_section', 'featured_products_section',
                     'narrative_section', 'about_section_two', 'heritage_features_section',
-                    'custom_content', 'custom_html_section'
+                    'custom_content', 'custom_html_section', 'trust_badges_section',
+                    'contact_cards_section', 'contact_form_section'
                 ];
                 
                 for (const field of jsonFields) {
@@ -263,6 +314,51 @@ export const usePageStore = create<PageState>((set, get) => ({
         } catch (err) {
             const errorMessage = err instanceof Error ? err.message : 'Failed to load page';
             console.error(`[PageStore] Error fetching slug '${slug}':`, err);
+            set(state => ({
+                pages: { ...state.pages, [slug]: null },
+                loading: { ...state.loading, [slug]: false },
+                errors: { ...state.errors, [slug]: errorMessage }
+            }));
+            return null;
+        }
+    },
+
+    fetchContactPage: async (): Promise<PageItem | null> => {
+        const slug = 'contact-us';
+        if (get().loading[slug]) return null;
+        const currentPages = get().pages;
+        if (currentPages[slug] !== undefined) return currentPages[slug];
+
+        set(state => ({
+            loading: { ...state.loading, [slug]: true },
+            errors: { ...state.errors, [slug]: null }
+        }));
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/contact-us`);
+            if (!response.ok) {
+                if (response.status === 404) {
+                    set(state => ({
+                        pages: { ...state.pages, [slug]: null },
+                        loading: { ...state.loading, [slug]: false },
+                        errors: { ...state.errors, [slug]: 'Page not found' }
+                    }));
+                    return null;
+                }
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json() as { success: boolean; data: PageItem; message?: string };
+            if (result.success && result.data) {
+                set(state => ({
+                    pages: { ...state.pages, [slug]: result.data },
+                    loading: { ...state.loading, [slug]: false }
+                }));
+                return result.data;
+            }
+            throw new Error(result.message || 'Failed to fetch contact page');
+        } catch (err) {
+            const errorMessage = err instanceof Error ? err.message : 'Failed to load page';
             set(state => ({
                 pages: { ...state.pages, [slug]: null },
                 loading: { ...state.loading, [slug]: false },

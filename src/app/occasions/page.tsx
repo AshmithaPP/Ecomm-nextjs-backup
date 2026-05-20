@@ -23,8 +23,8 @@ const OccasionsPage = () => {
 
     useEffect(() => {
         if (pageContent) {
-            const metaTitle = pageContent.seo?.meta_title || pageContent.meta_title;
-            const metaDescription = pageContent.seo?.meta_description || pageContent.meta_description;
+            const metaTitle = pageContent.seo?.meta_title ?? pageContent.meta_title;
+            const metaDescription = pageContent.seo?.meta_description ?? pageContent.meta_description;
 
             if (metaTitle) {
                 document.title = metaTitle;
@@ -44,9 +44,9 @@ const OccasionsPage = () => {
     }, [pageContent]);
 
     // Use occasions list from backend dynamic payload
-    const occasionsList = pageContent?.occasions || [];
+    const occasionsList = pageContent?.occasions ?? [];
 
-    const featuredProducts = homeData?.featured_products || [];
+    const featuredProducts = homeData?.featured_products ?? [];
 
     // Extract section settings safely
     const heroSettings = pageContent?.hero_section;
@@ -55,53 +55,55 @@ const OccasionsPage = () => {
     const narrativeSettings = pageContent?.narrative_section;
     const isTestimonialsEnabled = pageContent?.testimonials_section?.is_enabled !== false;
     const isNewsletterEnabled = pageContent?.newsletter_section?.is_enabled !== false;
-    const customContentHtml = pageContent?.custom_content?.html || pageContent?.content;
+    const customContentHtml = pageContent?.custom_content?.html ?? pageContent?.content;
 
     return (
         <div className="occasions-page" style={{ 
             backgroundColor: '#ffffff',
-            '--primary-theme-color': pageContent?.theme_settings?.primary_color || '#D4AF37'
+            '--primary-theme-color': pageContent?.theme_settings?.primary_color ?? '#D4AF37'
         } as React.CSSProperties}>
             {/* Elegant Hero Header */}
-            <ContactHero 
-                overTitle={heroSettings?.over_title || "AUSPICIOUS CURATIONS"}
-                title={heroSettings?.title || "Sarees Curated for Every Sacred Moment"}
-                subtitle={heroSettings?.subtitle || "From the grandeur of holy vows to the joy of festive lights, explore our curated silk collections designed to wrap your special moments in pure handwoven luxury."}
-                buttonText={heroSettings?.button_text || "Explore Collections"}
-                imageUrl={heroSettings?.image_url || "https://images.unsplash.com/photo-1610030469983-98e550d6193c"}
-            />
+            {heroSettings && (
+                <ContactHero 
+                    overTitle={heroSettings.over_title}
+                    title={heroSettings.title}
+                    subtitle={heroSettings.subtitle}
+                    buttonText={heroSettings.button_text}
+                    imageUrl={heroSettings.image_url}
+                />
+            )}
 
             {/* Premium Grid Section */}
             {occasionsList.length > 0 && (
                 <section className="occasions-grid-section container">
                     <div className="occasions-header-block text-center">
-                        <span className="section-category">{occasionSecSettings?.section_tag || "The Bridal & Festive Edits"}</span>
-                        <h2 className="section-title">{occasionSecSettings?.section_title || "Shop by Occasion"}</h2>
+                        <span className="section-category">{occasionSecSettings?.section_tag ?? ''}</span>
+                        <h2 className="section-title">{occasionSecSettings?.section_title ?? ''}</h2>
                         <p className="section-description">
-                            {occasionSecSettings?.section_description || "Every color carries a prayer, and every thread sings a legend. Select an occasion to discover its perfect drapery."}
+                            {occasionSecSettings?.section_description ?? ''}
                         </p>
                     </div>
 
                     <div className="row occasions-grid mt-5">
                         {occasionsList.map((occ: any, index: number) => {
-                            const imageUrl = occ.image_url 
+                            const imageUrl = occ.image_url
                                 ? (occ.image_url.startsWith('http') ? occ.image_url : `${IMAGE_BASE}${occ.image_url}`)
-                                : "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80";
+                                : '';
 
                             return (
                                 <div key={occ.occasion_id || index} className="col-lg-4 col-md-6 mb-5">
                                     <div className="occasion-premium-card">
                                         <div className="occasion-image-box">
-                                            <img src={imageUrl} alt={occ.title || occ.name} className="occasion-card-img" />
+                                            <img src={imageUrl} alt={occ.title ?? occ.name} className="occasion-card-img" />
                                             <div className="occasion-card-overlay"></div>
                                             <div className="occasion-accent-border"></div>
                                         </div>
                                         <div className="occasion-content-box">
-                                            <h3 className="occasion-card-title">{occ.title || occ.name}</h3>
-                                            <p className="occasion-card-desc">{occ.description || "Indulge in pure Kanchipuram mulberry silk sarees crafted with generational mastery."}</p>
-                                            <Link href={occ.redirect_url || `/products?category=${occ.slug}`}>
+                                            <h3 className="occasion-card-title">{occ.title ?? occ.name}</h3>
+                                            <p className="occasion-card-desc">{occ.description ?? ''}</p>
+                                            <Link href={occ.redirect_url ?? `/products?category=${occ.slug}`}>
                                                 <button className="occasion-card-btn">
-                                                    {occ.button_text || "Explore Collection"}
+                                                    {occ.button_text ?? ''}
                                                     <i className="bi bi-arrow-right ms-2"></i>
                                                 </button>
                                             </Link>
@@ -118,10 +120,10 @@ const OccasionsPage = () => {
             {featuredSecSettings?.is_enabled !== false && featuredProducts.length > 0 && (
                 <section className="occasions-products-section container pb-5">
                     <div className="occasions-header-block text-center mt-5 mb-5">
-                        <span className="section-category">{featuredSecSettings?.section_tag || "Generational Artistry"}</span>
-                        <h2 className="section-title">{featuredSecSettings?.section_title || "Trending Masterpieces"}</h2>
+                        <span className="section-category">{featuredSecSettings?.section_tag ?? ''}</span>
+                        <h2 className="section-title">{featuredSecSettings?.section_title ?? ''}</h2>
                         <p className="section-description">
-                            {featuredSecSettings?.section_description || "Authentic weaves loved and selected by connoisseurs of timeless heritage."}
+                            {featuredSecSettings?.section_description ?? ''}
                         </p>
                     </div>
                     <div className="row">
@@ -163,9 +165,9 @@ const OccasionsPage = () => {
                         <div className="narrative-border">
                             <i className="bi bi-gem narrative-icon"></i>
                             <blockquote className="narrative-quote">
-                                {narrativeSettings?.quote || "A Kanchipuram saree is never just a dress; it is a sacred heritage, a masterpiece woven across months, carrying the dreams of master weavers and the pride of centuries."}
+                                {narrativeSettings?.quote ?? ''}
                             </blockquote>
-                            <p className="narrative-author">— {narrativeSettings?.author || "The Weaver's Promise"}</p>
+                            <p className="narrative-author">— {narrativeSettings?.author ?? ''}</p>
                         </div>
                     </div>
                 </section>
@@ -173,7 +175,16 @@ const OccasionsPage = () => {
 
             {/* Reusable UI Components to align look & feel */}
             {isTestimonialsEnabled && <Testimonials />}
-            {isNewsletterEnabled && <NewsletterSection />}
+            {isNewsletterEnabled && (
+                <NewsletterSection
+                    dynamicData={{
+                        title: pageContent?.newsletter_section?.title,
+                        subtitle: pageContent?.newsletter_section?.subtitle,
+                        email_placeholder: pageContent?.newsletter_section?.placeholder,
+                        button_text: pageContent?.newsletter_section?.button_text
+                    }}
+                />
+            )}
         </div>
     );
 };

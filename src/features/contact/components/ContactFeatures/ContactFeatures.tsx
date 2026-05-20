@@ -3,48 +3,53 @@
 import React from 'react';
 import './ContactFeatures.css';
 
-const ContactFeatures = () => {
-    const featureHighlights = [
-        { icon: 'patch-check', text: 'Pure Silk Assurance' },
-        { icon: 'shield-lock', text: 'Secure Payment' },
-        { icon: 'people-fill', text: 'Trusted by Customers' },
-        { icon: 'magic', text: 'Authentic Weaving' }
-    ];
+interface ContactFeaturesProps {
+    trustBadgesSection?: {
+        is_enabled?: boolean;
+        badges?: Array<{ title: string; icon?: string }>;
+    };
+    contactCardsSection?: {
+        section_title?: string;
+        cards?: Array<{
+            title: string;
+            subtitle?: string;
+            value?: string;
+            action_text?: string;
+            action_link?: string;
+            icon?: string;
+        }>;
+    };
+}
 
-    const contactOptions = [
-        {
-            icon: 'telephone-fill',
-            title: 'Call Us',
-            description: 'Dedicated concierge line.',
-            actionText: '+91 98765 43210',
-            actionUrl: 'tel:+919876543210'
-        },
-        {
-            icon: 'whatsapp',
-            title: 'WhatsApp',
-            description: 'Instant support from experts.',
-            actionText: 'Chat With Us Now',
-            actionUrl: 'https://wa.me/919876543210'
-        },
-        {
-            icon: 'envelope-fill',
-            title: 'Email',
-            description: 'For wholesale & inquiries.',
-            actionText: 'curator@heritageweaves.com',
-            actionUrl: 'mailto:curator@heritageweaves.com'
-        },
-        {
-            icon: 'shop-window',
-            title: 'Visit Store',
-            description: 'Experience the silk in person.',
-            actionText: 'Find Directions',
-            actionUrl: 'https://maps.google.com'
-        }
-    ];
+const iconMap: Record<string, string> = {
+    shield: 'patch-check',
+    lock: 'shield-lock',
+    star: 'people-fill',
+    loom: 'magic',
+    phone: 'telephone-fill',
+    whatsapp: 'whatsapp',
+    mail: 'envelope-fill',
+    map: 'shop-window'
+};
+
+const ContactFeatures = ({ trustBadgesSection, contactCardsSection }: ContactFeaturesProps) => {
+    const featureHighlights = (trustBadgesSection?.badges || []).map((badge) => ({
+        text: badge.title,
+        icon: iconMap[badge.icon || ''] || 'patch-check'
+    }));
+
+    const contactOptions = (contactCardsSection?.cards || []).map((card) => ({
+        icon: iconMap[card.icon || ''] || 'telephone-fill',
+        title: card.title,
+        description: card.subtitle || '',
+        actionText: card.action_text || card.value || '',
+        actionUrl: card.action_link || '#'
+    }));
 
     return (
         <section className="contact-features-section">
             {/* Top Feature Bar */}
+            {trustBadgesSection?.is_enabled !== false && featureHighlights.length > 0 && (
             <div className="feature-bar-wrapper">
                 <div className="feature-bar-container">
                     {featureHighlights.map((feature, index) => (
@@ -55,6 +60,7 @@ const ContactFeatures = () => {
                     ))}
                 </div>
             </div>
+            )}
 
             {/* Contact Info Cards Section */}
             <div className="info-cards-section">
