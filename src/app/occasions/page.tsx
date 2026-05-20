@@ -9,7 +9,6 @@ import './occasions.css';
 import NewsletterSection from 'features/home/components/NewsletterSection/NewsletterSection';
 import Testimonials from 'features/home/components/Testimonials/Testimonials';
 import ContactHero from 'features/contact/components/ContactHero/ContactHero';
-import ProductCard from 'components/ui/ProductCard';
 
 const OccasionsPage = () => {
     const { homeData, fetchHomeData } = useHomeStore();
@@ -116,25 +115,7 @@ const OccasionsPage = () => {
                 </section>
             )}
 
-            {/* Featured Masterpieces Section */}
-            {featuredSecSettings?.is_enabled !== false && featuredProducts.length > 0 && (
-                <section className="occasions-products-section container pb-5">
-                    <div className="occasions-header-block text-center mt-5 mb-5">
-                        <span className="section-category">{featuredSecSettings?.section_tag ?? ''}</span>
-                        <h2 className="section-title">{featuredSecSettings?.section_title ?? ''}</h2>
-                        <p className="section-description">
-                            {featuredSecSettings?.section_description ?? ''}
-                        </p>
-                    </div>
-                    <div className="row">
-                        {featuredProducts.slice(0, 3).map((product: any) => (
-                            <div key={product.product_id} className="col-lg-4 col-md-6 mb-4">
-                                <ProductCard product={product} />
-                            </div>
-                        ))}
-                    </div>
-                </section>
-            )}
+          
 
             {/* Dynamic Custom CMS Rich Text Content Section */}
             {customContentHtml && customContentHtml !== '<p>Dynamic content for Occasions page.</p>' && (
