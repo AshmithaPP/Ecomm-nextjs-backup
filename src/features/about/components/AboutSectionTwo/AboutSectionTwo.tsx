@@ -4,7 +4,7 @@ import React from 'react';
 import styles from './AboutSectionTwo.module.css';
 import Image from 'next/image';
 import weavingLoomImg from 'assets/images/about/weaving_loom.png';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface AboutSectionTwoProps {
     title?: string;
@@ -21,8 +21,8 @@ const AboutSectionTwo = ({
     quote = "\"Every saree we create is a piece of wearable history, a prayer offered in silk and gold.\"",
     imageUrl
 }: AboutSectionTwoProps) => {
-    const resolvedImage = imageUrl
-        ? ((imageUrl.startsWith('http') || imageUrl.startsWith('/_next/')) ? imageUrl : `${IMAGE_BASE}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
+    const resolvedImage = (imageUrl && !imageUrl.includes('blog_hero.png'))
+        ? resolveMediaUrl(imageUrl)
         : weavingLoomImg.src;
 
     return (
@@ -34,7 +34,7 @@ const AboutSectionTwo = ({
                         src={resolvedImage} 
                         alt="Traditional Kanchipuram Weaving Loom" 
                         className={styles.aboutImage}
-                        style={{ width: '100%', height: 'auto', borderRadius: '8px', objectFit: 'cover' }}
+                        style={{ width: '100%', height: 'auto' }}
                     />
                 </div>
  

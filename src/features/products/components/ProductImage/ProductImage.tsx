@@ -1,15 +1,29 @@
 "use client";
 import React, { useState } from 'react';
 import './productImage.css';
+import { resolveMediaUrl } from '@/config/api';
 
 const ProductImage = ({ media, video }: any) => {
-    // Get images from media object
-    const galleryImages = media?.gallery?.length > 0 ? media.gallery : [media?.primary || ''];
+    // Support both variant format (gallery / primary) and main product format (gallery_images / primary_image)
+    let galleryImages: string[] = [];
+    if (media?.gallery && Array.isArray(media.gallery) && media.gallery.length > 0) {
+        galleryImages = media.gallery;
+    } else if (media?.gallery_images && Array.isArray(media.gallery_images) && media.gallery_images.length > 0) {
+        galleryImages = media.gallery_images;
+    } else {
+        const primary = media?.primary || media?.primary_image || '';
+        galleryImages = [primary];
+    }
+
+    // Resolve all image URLs
+    const resolvedGalleryImages = galleryImages
+        .filter(Boolean)
+        .map(url => resolveMediaUrl(url));
 
     // Combine images and video into a single items array
-    const items = [...galleryImages.map((url: string) => ({ type: 'image', url }))];
+    const items = [...resolvedGalleryImages.map((url: string) => ({ type: 'image', url }))];
     if (video) {
-        items.push({ type: 'video', url: video });
+        items.push({ type: 'video', url: resolveMediaUrl(video) });
     }
 
     const [activeIndex, setActiveIndex] = useState(0);
@@ -30,7 +44,7 @@ const ProductImage = ({ media, video }: any) => {
                         ) : (
                             <div className="video-thumb-overlay">
                                 <i className="bi bi-play-circle-fill"></i>
-                                <img src={galleryImages[0]} alt="Video Thumb" className="video-thumb-bg" />
+                                <img src={resolvedGalleryImages[0] || ''} alt="Video Thumb" className="video-thumb-bg" />
                             </div>
                         )}
                     </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 import ProductDetailsClient from './ProductDetailsClient';
-import { API_BASE, IMAGE_BASE } from '@/config/api';
+import { API_BASE, IMAGE_BASE, resolveMediaUrl } from '@/config/api';
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params;
@@ -15,23 +15,17 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
             const metaTitle = product.meta_title || `${product.name} | Silkcurator`;
             const metaDesc = product.meta_description || product.description?.substring(0, 160) || '';
             const metaKeywords = product.meta_keywords || '';
+            
             // Extract the primary image URL in a robust way
-            let primaryImage = '';
-            if (product.media?.primary_image) {
-                primaryImage = product.media.primary_image.startsWith('http') ? product.media.primary_image : `${IMAGE_BASE}${product.media.primary_image}`;
-            } else if (product.media?.primary) {
-                primaryImage = product.media.primary.startsWith('http') ? product.media.primary : `${IMAGE_BASE}${product.media.primary}`;
-            } else if (product.media?.gallery_images?.[0]) {
-                primaryImage = product.media.gallery_images[0].startsWith('http') ? product.media.gallery_images[0] : `${IMAGE_BASE}${product.media.gallery_images[0]}`;
-            } else if (product.media?.gallery?.[0]) {
-                primaryImage = product.media.gallery[0].startsWith('http') ? product.media.gallery[0] : `${IMAGE_BASE}${product.media.gallery[0]}`;
-            } else if (product.image_url) {
-                primaryImage = product.image_url.startsWith('http') ? product.image_url : `${IMAGE_BASE}${product.image_url}`;
-            } else if (product.image) {
-                primaryImage = product.image.startsWith('http') ? product.image : `${IMAGE_BASE}${product.image}`;
-            } else if (product.media?.images?.[0]) {
-                primaryImage = product.media.images[0].startsWith('http') ? product.media.images[0] : `${IMAGE_BASE}${product.media.images[0]}`;
-            }
+            const rawPrimaryImage = product.media?.primary_image || 
+                                    product.media?.primary || 
+                                    product.media?.gallery_images?.[0] || 
+                                    product.media?.gallery?.[0] || 
+                                    product.image_url || 
+                                    product.image || 
+                                    product.media?.images?.[0] || '';
+            
+            let primaryImage = resolveMediaUrl(rawPrimaryImage);
 
             // Map local addresses to the production domain so WhatsApp can scrape the image during local testing
             if (primaryImage) {

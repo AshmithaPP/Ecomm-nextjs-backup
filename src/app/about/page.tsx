@@ -121,19 +121,6 @@ const AboutPage: React.FC = () => {
                 />
             )}
             
-            {/* Trusted Heritage Section */}
-            {isSectionEnabled(pageContent.trusted_heritage_section) && pageContent.trusted_heritage_section && (
-                <TrustedHeritage 
-                    overline={pageContent.trusted_heritage_section.overline}
-                    headline={pageContent.trusted_heritage_section.headline}
-                    badgeText={pageContent.trusted_heritage_section.badge_text}
-                    trustCards={pageContent.trusted_heritage_section.trust_cards?.map((card) => ({
-                        title: card.title,
-                        text: card.description
-                    }))}
-                    featurePills={getMappedFeaturePills(pageContent.trusted_heritage_section.feature_pills)}
-                />
-            )}
             
             {/* Master's Voice Section */}
             {isSectionEnabled(pageContent.masters_voice_section) && pageContent.masters_voice_section && (

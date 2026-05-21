@@ -10,7 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { usePathname } from 'next/navigation';
 import { toast } from 'react-toastify';
 import Image from 'next/image';
-import { IMAGE_BASE } from '@/config/api';
+import { IMAGE_BASE, resolveMediaUrl } from '@/config/api';
 
 const ProductCard = ({ product }: { product: any }) => {
     const { title, name, image, image_url, discount, discountedPrice, price, originalPrice, original_price, discountBg, id, product_id, slug, stockStatus, stock_status } = product;
@@ -25,7 +25,7 @@ const ProductCard = ({ product }: { product: any }) => {
     const displayTitle = name || title;
     const displayPrice = discountedPrice || (price ? `₹${price}` : '');
     const displayOriginalPrice = originalPrice || (original_price ? `₹${original_price}` : '');
-    const imageUrl = image_url ? (image_url.startsWith('http') ? image_url : `${IMAGE_BASE}${image_url}`) : image;
+    const imageUrl = resolveMediaUrl(image_url || image);
 
     const isOutOfStock = stock_status === 'out_of_stock' || stock_status === 'sold_out';
 

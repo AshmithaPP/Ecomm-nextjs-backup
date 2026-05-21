@@ -23,17 +23,19 @@
 .aboutImageWrapper {
     position: absolute;
     width: 598.5px;
-    height: 748.125px;
+    height: auto;
     top: 0; /* was -49.06px — that caused the image to bleed into the hero above */
     left: 32px;
     opacity: 1;
     box-shadow: 0px 8px 10px -6px #0000001A, 0px 20px 25px -5px #0000001A;
     background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .aboutImage {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: cover;
     display: block;
 }
@@ -143,9 +145,7 @@
         height: auto;
     }
     
-    .aboutImageWrapper {
-        aspect-ratio: 598.5 / 748.125;
-    }
+
 
     .aboutTitle, .aboutDescription1, .aboutDescription2, .aboutQuote {
         width: 100%;

@@ -7,7 +7,7 @@ import CartIcon from 'assets/icons/ui/shopping-cart.png';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useCartStore } from '@/store/cartStore';
 import Image from 'next/image';
-import { IMAGE_BASE } from '@/config/api';
+import { IMAGE_BASE, resolveMediaUrl } from '@/config/api';
 import { useAuthStore } from '@/store/authStore';
 import { toast } from 'react-toastify';
 import RatingStars from '@/components/ui/RatingStars/RatingStars';
@@ -38,7 +38,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     
     const displayPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : price;
     const displayOriginalPrice = typeof originalPrice === 'string' ? parseFloat(originalPrice.replace(/[^0-9.]/g, '')) : originalPrice;
-    const imageUrl = image_url ? (image_url.startsWith('http') ? image_url : `${IMAGE_BASE}${image_url}`) : image;
+    const imageUrl = resolveMediaUrl(image_url || image);
 
     const isOutOfStock = stock_status === 'out_of_stock' || stockStatus === 'out_of_stock' || stock_status === 'sold_out';
 
