@@ -4,7 +4,7 @@ import React from "react";
 import "./Mastersvoice.css";
 import Image from "next/image";
 import weaverPortrait from "assets/images/weaver_portrait.png";
-import { IMAGE_BASE } from "@/config/api";
+import { resolveMediaUrl } from "@/config/api";
 
 interface MastersvoiceProps {
   label?: string;
@@ -28,7 +28,7 @@ const Mastersvoice = ({
   badgeText = "Years of\nExpertise"
 }: MastersvoiceProps) => {
   const resolvedImage = imageUrl
-    ? ((imageUrl.startsWith('http') || imageUrl.startsWith('/_next/')) ? imageUrl : `${IMAGE_BASE}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
+    ? (imageUrl.startsWith('/_next/') ? imageUrl : resolveMediaUrl(imageUrl))
     : weaverPortrait.src;
 
   return (

@@ -4,7 +4,7 @@ import React from 'react';
 import './ContactHero.css';
 import Image from 'next/image';
 import contactus from 'assets/images/contactus/contactus.png';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface ContactHeroProps {
     overTitle?: string;
@@ -23,10 +23,9 @@ const ContactHero = ({
     buttonLink,
     imageUrl
 }: ContactHeroProps) => {
-    
-    // Fallback to static asset if no external image_url is supplied or if it points to the default missing blog_hero.png
+
     const resolvedImage = (imageUrl && !imageUrl.includes('blog_hero.png'))
-        ? ((imageUrl.startsWith('http') || imageUrl.startsWith('/_next/')) ? imageUrl : `${IMAGE_BASE}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`)
+        ? (imageUrl.startsWith('/_next/') ? imageUrl : resolveMediaUrl(imageUrl))
         : contactus.src;
 
     return (
@@ -45,12 +44,11 @@ const ContactHero = ({
                             <button className="contact_hero_btn">{buttonText}</button>
                         )}
                     </div>
-                    <div className="col-md-6 contact_hero_right d-none d-md-flex">
-                        <img 
-                            src={resolvedImage} 
-                            alt="Saree Model" 
-                            className="contact_hero_img img-fluid"
-                            style={{ maxHeight: '100%', width: 'auto', objectFit: 'contain' }}
+                    <div className="col-md-6 contact_hero_right d-flex justify-content-end align-items-end d-none d-md-flex">
+                        <img
+                            src={resolvedImage}
+                            alt="Saree Model"
+                            className="contact_hero_img"
                         />
                     </div>
                 </div>

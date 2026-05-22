@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useHomeStore } from '@/store/homeStore';
 import { usePageStore } from '@/store/pageStore';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 import Link from 'next/link';
 import './occasions.css';
 import NewsletterSection from 'features/home/components/NewsletterSection/NewsletterSection';
@@ -85,9 +85,7 @@ const OccasionsPage = () => {
 
                     <div className="row occasions-grid mt-5">
                         {occasionsList.map((occ: any, index: number) => {
-                            const imageUrl = occ.image_url
-                                ? (occ.image_url.startsWith('http') ? occ.image_url : `${IMAGE_BASE}${occ.image_url}`)
-                                : '';
+                            const imageUrl = resolveMediaUrl(occ.image_url);
 
                             return (
                                 <div key={occ.occasion_id || index} className="col-lg-4 col-md-6 mb-5">

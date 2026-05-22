@@ -27,8 +27,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const router = useRouter();
     const pathname = usePathname();
     const { toggleWishlist, isInWishlist } = useWishlistStore();
-    const { addToCart, loading: cartLoading, setDrawerOpen } = useCartStore();
+    const { addToCart, setDrawerOpen } = useCartStore();
     const { isAuthenticated } = useAuthStore();
+    const [isAdding, setIsAdding] = React.useState(false);
 
     const rawId = product.product_id || product.id || (product.product && (product.product.product_id || product.product.id));
     const pid = (typeof rawId === 'object' && rawId !== null) ? (rawId.id || rawId.product_id) : rawId;
@@ -66,12 +67,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
             product
         });
 
-        const result = await addToCart(productIdToSend, variantId, 1);
-        if (result?.success) {
-            toast.success('Added to cart!');
-            setDrawerOpen(true);
-        } else {
-            toast.error(result?.message || 'Failed to add to cart');
+        setIsAdding(true);
+        try {
+            const result = await addToCart(productIdToSend, variantId, 1);
+            if (result?.success) {
+                toast.success('Added to cart!');
+                setDrawerOpen(true);
+            } else {
+                toast.error(result?.message || 'Failed to add to cart');
+            }
+        } finally {
+            setIsAdding(false);
         }
     };
 
@@ -133,9 +139,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 <button 
                     className={`btn-add-to-cart-v2 ${isOutOfStock ? 'disabled' : ''}`}
                     onClick={handleAddToCart}
-                    disabled={isOutOfStock || cartLoading}
+                    disabled={isOutOfStock || isAdding}
                 >
-                    {cartLoading ? (
+                    {isAdding ? (
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     ) : (
                         isOutOfStock ? 'OUT OF STOCK' : 'ADD TO CART'

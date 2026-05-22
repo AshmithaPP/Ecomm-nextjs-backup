@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useOrderStore } from '@/store/orderStore';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 import sareeImageFallback from 'assets/images/silk/collection1.png';
 import { toast } from 'react-toastify';
 import Link from 'next/link';
@@ -225,7 +225,7 @@ const TrackOrderPage = () => {
                                         {trackData.items.map((item: any, idx: number) => (
                                             <div className="d-flex align-items-center gap-3 p-2 rounded" key={idx} style={{ border: '1px solid #f1f5f9' }}>
                                                 <img 
-                                                    src={item.image_url ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE}${item.image_url}`) : sareeImageFallback.src} 
+                                                    src={item.image_url ? resolveMediaUrl(item.image_url) : sareeImageFallback.src} 
                                                     alt={item.product_name} 
                                                     style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} 
                                                 />

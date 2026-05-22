@@ -12,7 +12,7 @@ import traditionalSilk from 'assets/images/bridal/occasion3.png';
 import collection1 from 'assets/images/bridal/occasion4.png';
 import collection2 from 'assets/images/cotton/occasion5.png';
 
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface OccasionItem {
     occasion_id: number;
@@ -26,12 +26,10 @@ interface ShopByOccasionProps {
 }
 
 const ShopByOccasion = ({ dynamicData }: ShopByOccasionProps) => {
-  const IMAGE_BASE_URL = IMAGE_BASE;
-
   const displayData = dynamicData && dynamicData.length > 0 ? dynamicData.map(item => ({
     id: item.occasion_id,
     name: item.name,
-    image: item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE_URL}${item.image_url}`,
+    image: resolveMediaUrl(item.image_url),
     url: item.redirect_url
   })) : [
     { id: 1, name: 'Wedding', image: bridalSaree, url: '/occasion/wedding' },

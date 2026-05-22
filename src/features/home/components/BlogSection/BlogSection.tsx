@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import BlogCard from './BlogCard';
 import './blogSection.css';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 import { useBlogStore, BlogItem } from '@/store/blogStore';
 
 interface BlogSectionProps {
@@ -25,12 +25,10 @@ const BlogSection = ({ showTitle = true, title = "Our Blogs", customTitleClass =
 
   const blogs = dynamicBlogs || storeBlogs;
 
-  // Fallback for image paths if they are from the backend
-  const getImageUrl = (image: string | undefined) => {
+  const getImageUrl = (image: any) => {
     if (!image) return '';
-    if (image.startsWith('http')) return image;
-    if (image.startsWith('/uploads')) return `${IMAGE_BASE}${image}`;
-    return image;
+    if (typeof image !== 'string') return image;
+    return resolveMediaUrl(image);
   };
 
   return (

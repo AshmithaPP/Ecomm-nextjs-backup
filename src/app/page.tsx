@@ -11,9 +11,7 @@ import Testimonials from 'features/home/components/Testimonials/Testimonials';
 import BlogSection from 'features/home/components/BlogSection/BlogSection';
 import NewsletterSection from 'features/home/components/NewsletterSection/NewsletterSection';
 import { useHomeStore } from '@/store/homeStore';
-import { IMAGE_BASE } from '@/config/api';
-
-const IMAGE_BASE_URL = IMAGE_BASE;
+import { resolveMediaUrl } from '@/config/api';
 
 const mapHomeProduct = (p: any) => {
   const pid = p.product_id || p.id || (p.product && (p.product.product_id || p.product.id));
@@ -24,7 +22,7 @@ const mapHomeProduct = (p: any) => {
     title: p.product_name || p.name || p.title || (p.product && (p.product.product_name || p.product.name)),
     discountedPrice: p.price ? (String(p.price).startsWith('₹') ? p.price : `₹${p.price}`) : p.discountedPrice,
     originalPrice: p.original_price ? (String(p.original_price).startsWith('₹') ? p.original_price : `₹${p.original_price}`) : p.originalPrice,
-    image: p.image_url ? (p.image_url.startsWith('http') ? p.image_url : `${IMAGE_BASE_URL}${p.image_url}`) : (p.image || (p.product && p.product.image_url ? `${IMAGE_BASE_URL}${p.product.image_url}` : '')),
+    image: p.image_url ? resolveMediaUrl(p.image_url) : (p.image || (p.product && p.product.image_url ? resolveMediaUrl(p.product.image_url) : '')),
     discount: p.discount_percentage > 0 ? `${p.discount_percentage}% OFF` : (p.discount || null),
     rating: p.rating ? (typeof p.rating === 'object' ? p.rating : { average: p.rating, count: p.reviews_count || 0 }) : null,
     stockStatus: p.stock_status || p.stockStatus || 'in_stock',

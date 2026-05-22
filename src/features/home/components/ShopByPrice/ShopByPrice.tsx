@@ -49,7 +49,7 @@ const priceData = [
     }
 ];
 
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface ShopByPriceProps {
     data?: any[];
@@ -57,7 +57,6 @@ interface ShopByPriceProps {
 
 const ShopByPrice = ({ data }: ShopByPriceProps) => {
     const sectionRef = useRef<HTMLElement>(null);
-    const IMAGE_BASE_URL = IMAGE_BASE;
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -86,7 +85,7 @@ const ShopByPrice = ({ data }: ShopByPriceProps) => {
         title: item.label,
         type: index === 0 ? 'large' : 'small',
         image: item.image_url 
-            ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE_URL}${item.image_url}`)
+            ? resolveMediaUrl(item.image_url)
             : (index === 0 ? largeSaree : (index === 1 ? everydaySaree : (index === 2 ? officeSaree : (index === 3 ? weddingSaree : festiveSaree)))),
         url: `/shop?min_price=${item.min_price}&max_price=${item.max_price}`
     })) : priceData;

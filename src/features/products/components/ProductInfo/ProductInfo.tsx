@@ -18,7 +18,9 @@ const ProductInfo = ({ product }: any) => {
     const router = useRouter();
     const { setSelectedVariant } = useProductStore();
     const { isAuthenticated } = useAuthStore();
-    const { addToCart, loading: cartLoading, setDrawerOpen } = useCartStore();
+    const { addToCart, setDrawerOpen } = useCartStore();
+    const [isAddingToCart, setIsAddingToCart] = React.useState(false);
+    const [isBuyingNow, setIsBuyingNow] = React.useState(false);
     const { items: wishlistItems, toggleWishlist } = useWishlistStore();
     const [quantity, setQuantity] = React.useState(1);
 
@@ -32,23 +34,33 @@ const ProductInfo = ({ product }: any) => {
     const handleBuyNow = async () => {
         const variantId = product.selected_variant?.variant_id || product.default_variant_id;
 
-        const result = await addToCart(product.product_id, variantId, quantity);
-        if (result.success) {
-            router.push('/checkout');
-        } else {
-            toast.error(result.message || "Failed to add to cart");
+        setIsBuyingNow(true);
+        try {
+            const result = await addToCart(product.product_id, variantId, quantity);
+            if (result.success) {
+                router.push('/checkout');
+            } else {
+                toast.error(result.message || "Failed to add to cart");
+            }
+        } finally {
+            setIsBuyingNow(false);
         }
     };
 
     const handleAddToCart = async () => {
         const variantId = product.selected_variant?.variant_id || product.default_variant_id;
 
-        const result = await addToCart(product.product_id, variantId, quantity);
-        if (result.success) {
-            toast.success("Added to cart successfully!");
-            setDrawerOpen(true);
-        } else {
-            toast.error(result.message || "Failed to add to cart");
+        setIsAddingToCart(true);
+        try {
+            const result = await addToCart(product.product_id, variantId, quantity);
+            if (result.success) {
+                toast.success("Added to cart successfully!");
+                setDrawerOpen(true);
+            } else {
+                toast.error(result.message || "Failed to add to cart");
+            }
+        } finally {
+            setIsAddingToCart(false);
         }
     };
 
@@ -255,19 +267,19 @@ ${liveUrl}`;
                 <button
                     className="btn btn-buy-now w-100 d-flex justify-content-center align-items-center gap-2"
                     onClick={handleBuyNow}
-                    disabled={isOutOfStock || cartLoading}
+                    disabled={isOutOfStock || isBuyingNow || isAddingToCart}
                     style={{ height: '50px', fontSize: '16px' }}
                 >
                     <img src={typeof buyNowIcon === 'string' ? buyNowIcon : (buyNowIcon as any).src} alt="Buy Now" width="14" height="18" />
-                    {cartLoading ? 'Processing...' : 'Buy Now'}
+                    {isBuyingNow ? 'Processing...' : 'Buy Now'}
                 </button>
                 <button
                     className="btn btn-add-cart w-100 d-flex justify-content-center align-items-center gap-2"
-                    disabled={isOutOfStock || cartLoading}
+                    disabled={isOutOfStock || isAddingToCart || isBuyingNow}
                     onClick={handleAddToCart}
                     style={{ height: '50px', fontSize: '16px' }}
                 >
-                    {cartLoading ? (
+                    {isAddingToCart ? (
                         <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     ) : 'Add to Cart'}
                 </button>

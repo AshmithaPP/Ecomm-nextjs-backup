@@ -14,7 +14,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { LogOut, ChevronDown } from 'lucide-react';
-import { IMAGE_BASE, API_BASE } from '@/config/api';
+import { IMAGE_BASE, API_BASE, resolveMediaUrl } from '@/config/api';
 
 const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -52,9 +52,8 @@ const Navbar = () => {
         fetchNav();
     }, []);
 
-    const IMAGE_BASE_URL = IMAGE_BASE;
     const logoSrc = siteInfo.site_logo
-        ? (siteInfo.site_logo.startsWith('http') ? siteInfo.site_logo : `${IMAGE_BASE_URL}${siteInfo.site_logo}`)
+        ? resolveMediaUrl(siteInfo.site_logo)
         : Logo;
 
     const toggleMenu = () => setMenuOpen(prev => !prev);

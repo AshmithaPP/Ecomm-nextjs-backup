@@ -9,7 +9,7 @@ import bridalSaree from 'assets/images/bridal/bridal_saree.png';
 import traditionalSilk from 'assets/images/bridal/traditional_silk.png';
 import lightweightSilk from 'assets/images/bridal/lightweight_silk.png';
 
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface CategoryItem {
     category_id: string;
@@ -25,15 +25,13 @@ interface CategoriesSectionProps {
 }
 
 const CategoriesSection = ({ dynamicCategories }: CategoriesSectionProps) => {
-    const IMAGE_BASE_URL = IMAGE_BASE;
-
     // Use dynamic data or fallback to local static data
     const categories = dynamicCategories && dynamicCategories.length > 0 
         ? dynamicCategories.map(cat => ({
             id: cat.category_id,
             title: cat.category_name,
             count: cat.product_count,
-            imageUrl: cat.image_url.startsWith('http') ? cat.image_url : `${IMAGE_BASE_URL}${cat.image_url}`,
+            imageUrl: resolveMediaUrl(cat.image_url),
             url: cat.redirect_url
         }))
         : [

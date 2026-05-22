@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import './newsletterSection.css';
 import newsletterImg from 'assets/images/silk/NewsSection.png'; 
 import Image from 'next/image';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface NewsletterSectionProps {
     dynamicData?: any;
@@ -12,7 +12,6 @@ interface NewsletterSectionProps {
 
 const NewsletterSection = ({ dynamicData }: NewsletterSectionProps) => {
   const [email, setEmail] = useState('');
-  const IMAGE_BASE_URL = IMAGE_BASE;
 
   const displayData = {
     title: dynamicData?.title || "Enter The World Of Timeless Sarees",
@@ -20,7 +19,7 @@ const NewsletterSection = ({ dynamicData }: NewsletterSectionProps) => {
     emailPlaceholder: dynamicData?.email_placeholder || "Enter Your Email Address",
     buttonText: dynamicData?.button_text || "Stay Connected",
     image: dynamicData?.image_url 
-      ? (dynamicData.image_url.startsWith('http') ? dynamicData.image_url : `${IMAGE_BASE_URL}${dynamicData.image_url}`)
+      ? resolveMediaUrl(dynamicData.image_url)
       : newsletterImg
   };
 

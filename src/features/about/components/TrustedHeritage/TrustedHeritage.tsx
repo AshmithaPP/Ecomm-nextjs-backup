@@ -48,16 +48,8 @@ const TrustedHeritage = ({
         }
     ];
 
-    const defaultFeaturePills = [
-        { icon: "bi-shop", label: "Direct From Weavers" },
-        { icon: "bi-stars", label: "Limited Edition" },
-        { icon: "bi-pentagon", label: "Premium Zari" },
-        { icon: "bi-gem", label: "Bridal Expert Support" },
-        { icon: "bi-heart", label: "Trusted By Customers" }
-    ];
-
+  
     const displayTrustCards = customTrustCards || defaultTrustCards;
-    const displayFeaturePills = customFeaturePills || defaultFeaturePills;
 
     return (
         <section className={styles.trustedSectionWrapper}>
@@ -96,19 +88,7 @@ const TrustedHeritage = ({
                 </div>
             </div>
 
-            {/* Bottom Section - Full Width */}
-            <div className={styles.trustedBottomSection}>
-                <div className={styles.trustedFeaturesGrid}>
-                    {displayFeaturePills.map((feature, index) => (
-                        <div key={index} className={styles.trustedFeatureBox}>
-                            <div className={styles.trustedFeatureIconBg}>
-                                <i className={`bi ${feature.icon} ${styles.trustedFeatureIcon}`}></i>
-                            </div>
-                            <p className={styles.trustedFeatureLabel}>{feature.label}</p>
-                        </div>
-                    ))}
-                </div>
-            </div>
+           
         </section>
     );
 };

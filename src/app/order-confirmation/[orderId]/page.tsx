@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 import { useOrderStore } from '@/store/orderStore';
 import './orderConfirmation.css';
 import Image from 'next/image';
@@ -114,7 +114,7 @@ const OrderConfirmationPage = () => {
                 <div className="order-conf-product-box" key={idx} style={{ marginBottom: '15px' }}>
                   <div className="order-conf-product-image-container">
                     <img 
-                      src={item.image_url ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE}${item.image_url}`) : sareeImageFallback.src} 
+                      src={item.image_url ? resolveMediaUrl(item.image_url) : sareeImageFallback.src} 
                       alt={item.name} 
                       className="img-fluid" 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}

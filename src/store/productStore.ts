@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { API_BASE, IMAGE_BASE } from '@/config/api';
+import { API_BASE, IMAGE_BASE, resolveMediaUrl } from '@/config/api';
 
 interface ProductState {
     products: any[];
@@ -83,7 +83,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
             
             if (data.success) {
                 const mappedProducts = data.products.map((p: any) => {
-                    const fullImageUrl = p.image_url ? (p.image_url.startsWith('http') ? p.image_url : `${IMAGE_BASE}${p.image_url}`) : '';
+                    const fullImageUrl = resolveMediaUrl(p.image_url);
                     return {
                         ...p,
                         id: p.product_id,

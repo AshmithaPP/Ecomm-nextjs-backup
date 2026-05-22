@@ -1,5 +1,5 @@
 import React from 'react';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 import Link from 'next/link';
 import heroRight from 'assets/images/silk/heroRight.png';
 import Image from 'next/image';
@@ -18,8 +18,6 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({ dynamicData }: HeroSectionProps) => {
-    const IMAGE_BASE_URL = IMAGE_BASE;
-    
     // Fallback data if API fails
     const displayData = dynamicData || {
         title: "Timeless Kanchipuram Silk Sarees",
@@ -31,8 +29,8 @@ const HeroSection = ({ dynamicData }: HeroSectionProps) => {
         image_url: heroRight
     };
 
-    const logoSrc = typeof displayData.image_url === 'string' 
-        ? (displayData.image_url.startsWith('http') ? displayData.image_url : `${IMAGE_BASE_URL}${displayData.image_url}`)
+    const logoSrc = typeof displayData.image_url === 'string'
+        ? resolveMediaUrl(displayData.image_url)
         : displayData.image_url;
 
     return (

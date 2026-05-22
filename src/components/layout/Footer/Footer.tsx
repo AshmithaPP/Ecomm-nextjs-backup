@@ -13,20 +13,19 @@ import twitterIcon from 'assets/icons/social/twittericon.png';
 import Image from 'next/image';
 
 import { useSettingsStore } from '@/store/settingsStore';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 const Footer = () => {
     const { getSiteInfo, fetchSettings, getFooterSettings } = useSettingsStore();
     const siteInfo = getSiteInfo();
     const footer = getFooterSettings();
-    const IMAGE_BASE_URL = IMAGE_BASE;
 
     useEffect(() => {
         fetchSettings();
     }, [fetchSettings]);
 
     const logoSrc = siteInfo.site_logo
-        ? (siteInfo.site_logo.startsWith('http') ? siteInfo.site_logo : `${IMAGE_BASE_URL}${siteInfo.site_logo}`)
+        ? resolveMediaUrl(siteInfo.site_logo)
         : LogoWhite;
 
     return (

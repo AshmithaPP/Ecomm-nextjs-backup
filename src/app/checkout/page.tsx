@@ -17,7 +17,7 @@ import orderIcon1 from 'assets/icons/ui/orderIcon1.png';
 import orderIcon2 from 'assets/icons/ui/orderIcon2.png';
 import orderIcon3 from 'assets/icons/ui/orderIcon3.png';
 import vaikundhasilk from 'assets/images/silk/vaikundhasilk.jpg';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 const CheckoutPage = () => {
     const router = useRouter();
@@ -650,7 +650,7 @@ const CheckoutPage = () => {
                                     <div className="product-summary-row" key={item.cart_item_id || idx}>
                                         <div className="product-img-box">
                                             <img 
-                                                src={item.image_url ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE}${item.image_url}`) : (item.image || vaikundhasilk.src)} 
+                                                src={resolveMediaUrl(item.image_url || item.image || vaikundhasilk.src)} 
                                                 alt={item.name} 
                                             />
                                         </div>

@@ -3,7 +3,7 @@
 import React from 'react';
 import TrendingCard from './TrendingCard';
 import './trendingPicks.css';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 // Import images from assets
 import occasion1 from 'assets/images/bridal/occasion1.png';
@@ -45,7 +45,7 @@ const TrendingPicks = ({ data }: TrendingPicksProps) => {
             id: item.id || index,
             title: item.name || item.title,
             size: (index === 0 ? 'large' : 'small') as 'large' | 'small', // Simple layout logic
-            image: item.image_url ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE}${item.image_url}`) : item.image,
+            image: item.image_url ? resolveMediaUrl(item.image_url) : item.image,
             slug: item.slug
         }))
         : trendingCardsData;

@@ -4,7 +4,7 @@ import React from 'react';
 import './cartItem.css';
 import { useCartStore, CartItem as ICartItem } from '@/store/cartStore';
 import { useRouter } from 'next/navigation';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface CartItemProps {
     item: ICartItem;
@@ -35,9 +35,7 @@ const CartItem = ({ item }: CartItemProps) => {
     const priceValue = parseFloat(String(item.unit_price || item.price || '0').replace(/[^0-9.]/g, '') || '0');
     
     const rawImage = item.image_url || item.image;
-    const imageUrl = rawImage 
-        ? (rawImage.startsWith('http') ? rawImage : `${IMAGE_BASE}${rawImage}`) 
-        : '';
+    const imageUrl = resolveMediaUrl(rawImage);
 
     const attributeText = item.attributes 
         ? Object.entries(item.attributes).map(([key, val]: [string, any]) => `${key}: ${val}`).join(' | ')

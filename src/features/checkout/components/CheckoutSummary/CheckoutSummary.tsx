@@ -6,7 +6,7 @@ import orderIcon1 from 'assets/icons/ui/orderIcon1.png';
 import orderIcon2 from 'assets/icons/ui/orderIcon2.png';
 import orderIcon3 from 'assets/icons/ui/orderIcon3.png';
 import { useCartStore } from '@/store/cartStore';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface CheckoutSummaryProps {
     handlePayNow: (e: React.MouseEvent) => void;
@@ -37,7 +37,7 @@ const CheckoutSummary = ({ handlePayNow }: CheckoutSummaryProps) => {
                     <div className="product-summary-row" key={item.product_id}>
                         <div className="product-img-box">
                             <img 
-                                src={item.image_url ? (item.image_url.startsWith('http') ? item.image_url : `${IMAGE_BASE}${item.image_url}`) : item.image} 
+                                src={resolveMediaUrl(item.image_url || item.image)} 
                                 alt={item.product_name || item.name} 
                                 style={{ width: '96px', height: '128px', objectFit: 'cover' }} 
                             />

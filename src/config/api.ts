@@ -20,7 +20,7 @@ export const IMAGE_BASE = getFallbackImageBase();
  * relative paths properly handled.
  */
 export const resolveMediaUrl = (url: string | null | undefined): string => {
-  if (!url) return '';
+  if (!url || typeof url !== 'string') return '';
   
   // If it starts with local development backend URL, replace it with the configured IMAGE_BASE
   if (url.startsWith('http://localhost:5000')) {

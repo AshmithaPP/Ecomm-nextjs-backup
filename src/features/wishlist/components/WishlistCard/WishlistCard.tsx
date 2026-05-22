@@ -4,7 +4,7 @@ import React from 'react';
 import './wishlistCard.css';
 import { useWishlistStore } from '@/store/wishlistStore';
 import { useRouter } from 'next/navigation';
-import { IMAGE_BASE } from '@/config/api';
+import { resolveMediaUrl } from '@/config/api';
 
 interface WishlistCardProps {
     product: any;
@@ -29,9 +29,7 @@ const WishlistCard = ({ product }: WishlistCardProps) => {
     };
 
     const displayPrice = product.price || product.discountedPrice || product.originalPrice;
-    const imageUrl = product.image_url 
-        ? (product.image_url.startsWith('http') ? product.image_url : `${IMAGE_BASE}${product.image_url}`) 
-        : (product.image || "");
+    const imageUrl = resolveMediaUrl(product.image_url || product.image || "");
 
     return (
         <div className="wishlist-item-card text-center" onClick={handleCardClick} style={{ cursor: 'pointer' }}>

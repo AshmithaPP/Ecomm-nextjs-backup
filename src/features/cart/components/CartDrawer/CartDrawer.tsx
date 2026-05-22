@@ -52,16 +52,16 @@ const CartDrawer = () => {
 
                 <div className="cart-drawer-content">
                     {/* Free Shipping Progress */}
-                    <div className="drawer-shipping-progress p-3">
+                    <div className={`drawer-shipping-progress p-3 ${amountLeft > 0 ? 'shipping-locked' : 'shipping-unlocked'}`}>
                         <p className="shipping-info text-center mb-2">
                             {amountLeft > 0 ? (
                                 <>Add <strong>₹{amountLeft.toLocaleString('en-IN')}</strong> more for <strong>FREE Shipping</strong></>
                             ) : (
-                                <span className="text-success">🎉 FREE Shipping Unlocked!</span>
+                                <span className="unlocked-text">🎉 FREE Shipping Unlocked!</span>
                             )}
                         </p>
                         <div className="progress-track">
-                            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
+                            <div className={`progress-fill ${amountLeft === 0 ? 'unlocked' : ''}`} style={{ width: `${progress}%` }}></div>
                         </div>
                     </div>
 
