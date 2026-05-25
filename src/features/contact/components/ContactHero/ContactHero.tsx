@@ -28,6 +28,22 @@ const ContactHero = ({
         ? (imageUrl.startsWith('/_next/') ? imageUrl : resolveMediaUrl(imageUrl))
         : contactus.src;
 
+    const getNormalizedLink = (link?: string) => {
+        if (buttonText && buttonText.toLowerCase().includes('story')) {
+            return '#about-story';
+        }
+        if (buttonText && buttonText.toLowerCase().includes('blog')) {
+            return '/blog';
+        }
+        if (!link) return '/collections/products';
+        const lowerLink = link.toLowerCase();
+        if (lowerLink.includes('collection') || lowerLink.includes('product') || lowerLink === '/collections' || lowerLink === '/products') {
+            return '/collections/products';
+        }
+        return link;
+    };
+    const resolvedLink = getNormalizedLink(buttonLink);
+
     return (
         <section className="contact_hero_section">
             <div className="container h-100">
@@ -36,12 +52,10 @@ const ContactHero = ({
                         <p className="contact_hero_eyebrow">{overTitle}</p>
                         <h1 className="contact_hero_title">{title}</h1>
                         <p className="contact_hero_subtext">{subtitle}</p>
-                        {buttonLink ? (
-                            <a href={buttonLink}>
+                        {buttonText && (
+                            <a href={resolvedLink}>
                                 <button className="contact_hero_btn">{buttonText}</button>
                             </a>
-                        ) : (
-                            <button className="contact_hero_btn">{buttonText}</button>
                         )}
                     </div>
                     <div className="col-md-6 contact_hero_right d-flex justify-content-end align-items-end d-none d-md-flex">

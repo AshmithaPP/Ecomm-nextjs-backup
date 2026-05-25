@@ -51,7 +51,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
             title: "Timeless Kanchipuram Silk Sarees",
             subtitle: "Handwoven heritage. Pure mulberry silk. Authentic zari.",
             image: "",
-            buttonLink: "/products",
+            buttonLink: "/collections/products",
             buttonText: "Explore Collections"
         };
     },

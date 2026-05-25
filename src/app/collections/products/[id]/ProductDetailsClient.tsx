@@ -13,18 +13,28 @@ import AuthenticitySection from 'features/products/components/AuthenticitySectio
 import CustomerReviews from 'features/products/components/CustomerReviews/CustomerReviews';
 import ProductCard from 'features/products/components/ProductCard/ProductCard';
 import ArrowButton from 'components/common/ArrowButton';
+import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
+import RecentlyViewedCarousel from 'features/products/components/RecentlyViewedCarousel/RecentlyViewedCarousel';
 import './productDetailsPage.css';
 
 const ProductDetailsClient = () => {
     const params = useParams();
     const slug = params?.id as string;
     const { selectedProduct: product, loading, error, fetchProductBySlug } = useProductStore();
+    const { trackView } = useRecentlyViewedStore();
 
     useEffect(() => {
         if (slug) {
             fetchProductBySlug(slug);
         }
     }, [slug, fetchProductBySlug]);
+
+    // Track recently viewed product when details load successfully
+    useEffect(() => {
+        if (product && product.product_id) {
+            trackView(product.product_id);
+        }
+    }, [product, trackView]);
 
     // Carousel Logic
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -68,10 +78,11 @@ const ProductDetailsClient = () => {
         return <div className="container py-5 text-center"><h3>Product not found.</h3></div>;
     }
 
-    const breadcrumbItems = (product.breadcrumb || []).map((b: any) => ({
-        label: b.name,
-        path: b.link
-    }));
+    const breadcrumbItems = [
+        { label: 'Home', path: '/' },
+        { label: 'Collections', path: '/collections/products' },
+        { label: product.name || product.title, path: `/collections/products/${slug}` }
+    ];
 
     // Dynamically derive Authenticity Section data
     const hasAuthenticityData = (product.originInfo && Object.keys(product.originInfo).length > 0) || (product.stats && product.stats.length > 0);
@@ -181,9 +192,16 @@ const ProductDetailsClient = () => {
             )}
 
             {/* Customer Reviews Section */}
-            <div className="row mb-5">
+            <div className="row mb-3">
                 <div className="col-12">
                     <CustomerReviews productId={product.product_id} />
+                </div>
+            </div>
+
+            {/* Recently Viewed Products Section */}
+            <div className="row mb-3 justify-content-center">
+                <div className="col-12">
+                    <RecentlyViewedCarousel />
                 </div>
             </div>
         </div>

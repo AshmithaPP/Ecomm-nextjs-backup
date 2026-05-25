@@ -45,7 +45,7 @@ const OrderConfirmationPage = () => {
           <p style={{ fontFamily: 'Jost', color: '#5A413D' }}>{error || 'We could not find the details for this order.'}</p>
           <button 
             className="order-conf-btn-track mt-3" 
-            onClick={() => router.push('/products')}
+            onClick={() => router.push('/collections/products')}
             style={{ width: 'auto', padding: '0 32px', margin: '0 auto' }}
           >
             Back to Shop
@@ -326,7 +326,7 @@ const OrderConfirmationPage = () => {
               </div>
 
               <div className="order-conf-action-buttons">
-                <button className="order-conf-btn-track" onClick={() => router.push('/products')}>
+                <button className="order-conf-btn-track" onClick={() => router.push('/collections/products')}>
                   VIEW MORE PRODUCTS <i className="bi bi-arrow-right ms-2"></i>
                 </button>
                 <button className="order-conf-btn-continue" onClick={() => router.push('/')}>

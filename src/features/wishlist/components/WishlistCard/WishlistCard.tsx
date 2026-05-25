@@ -23,7 +23,7 @@ const WishlistCard = ({ product }: WishlistCardProps) => {
     const handleCardClick = () => {
         // Use slug directly if already present in the wishlist item
         if (product.slug) {
-            router.push(`/products/${product.slug}`);
+            router.push(`/collections/products/${product.slug}`);
             return;
         }
         // Derive slug from name using same rules as backend
@@ -38,7 +38,7 @@ const WishlistCard = ({ product }: WishlistCardProps) => {
                 .replace(/-+/g, '-')            // collapse double hyphens
                 .replace(/^-|-$/g, '')          // trim edge hyphens
             : pid;
-        router.push(`/products/${slugified}`);
+        router.push(`/collections/products/${slugified}`);
     };
 
     const handleRemove = async (e: React.MouseEvent) => {

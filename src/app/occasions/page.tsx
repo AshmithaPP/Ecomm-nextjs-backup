@@ -47,7 +47,28 @@ const OccasionsPage = () => {
 
     const featuredProducts = homeData?.featured_products ?? [];
 
-    // Extract section settings safely
+    const slugify = (value: string) => value
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    const buildOccasionLink = (occ: any) => {
+      if (occ.slug) {
+        return `/collections/products?occasion=${encodeURIComponent(occ.slug)}`;
+      }
+      if (occ.redirect_url?.includes('/collections/products?occasion=')) {
+        return occ.redirect_url;
+      }
+      if (occ.redirect_url?.startsWith('/occasion/')) {
+        const slug = occ.redirect_url.split('/').pop() || slugify(occ.title || occ.name || '');
+        return `/collections/products?occasion=${encodeURIComponent(slug)}`;
+      }
+      const slug = slugify(occ.title || occ.name || '');
+      return `/collections/products?occasion=${encodeURIComponent(slug)}`;
+    };
+
     const heroSettings = pageContent?.hero_section;
     const occasionSecSettings = pageContent?.occasion_section;
     const featuredSecSettings = pageContent?.featured_products_section;
@@ -98,7 +119,7 @@ const OccasionsPage = () => {
                                         <div className="occasion-content-box">
                                             <h3 className="occasion-card-title">{occ.title ?? occ.name}</h3>
                                             <p className="occasion-card-desc">{occ.description ?? ''}</p>
-                                            <Link href={occ.redirect_url ?? `/products?category=${occ.slug}`}>
+                                            <Link href={buildOccasionLink(occ)}>
                                                 <button className="occasion-card-btn">
                                                     {occ.button_text ?? ''}
                                                     <i className="bi bi-arrow-right ms-2"></i>

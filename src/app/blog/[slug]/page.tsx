@@ -44,6 +44,7 @@ const BlogDetails = () => {
                 title={blog.title}
                 subtitle={blog.seo_description || blog.excerpt}
                 buttonText="Back to Blogs"
+                buttonLink="/blog"
                 imageUrl={blogdetailsHero.src}
             />
 

@@ -16,8 +16,7 @@ const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
     // Default items if none provided
     const defaultItems: BreadcrumbItem[] = [
         { label: 'Home', path: '/' },
-        { label: 'Sarees', path: '/products' },
-        { label: 'Collection', path: pathname }
+        { label: 'Collections', path: '/collections/products' }
     ];
 
     const breadcrumbItems = items || defaultItems;

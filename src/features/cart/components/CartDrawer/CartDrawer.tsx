@@ -70,7 +70,7 @@ const CartDrawer = () => {
                             <div className="empty-cart-msg text-center py-5">
                                 <i className="bi bi-bag-x mb-3 d-block" style={{ fontSize: '3rem', color: '#ccc' }}></i>
                                 <p>Your cart is empty</p>
-                                <button className="btn btn-dark mt-2" onClick={() => { setDrawerOpen(false); router.push('/products'); }}>
+                                <button className="btn btn-dark mt-2" onClick={() => { setDrawerOpen(false); router.push('/collections/products'); }}>
                                     Start Shopping
                                 </button>
                             </div>

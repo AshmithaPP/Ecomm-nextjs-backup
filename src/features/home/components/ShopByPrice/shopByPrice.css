@@ -57,6 +57,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 8%; /* Keep model faces in view */
     transition: transform 0.3s ease-out;
 }
 

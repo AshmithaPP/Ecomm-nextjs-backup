@@ -43,7 +43,7 @@ const MyOrders = () => {
             {orders.length === 0 ? (
                 <div className="no-orders">
                     <p>You haven't placed any orders yet.</p>
-                    <button onClick={() => router.push('/products')}>Start Shopping</button>
+                    <button onClick={() => router.push('/collections/products')}>Start Shopping</button>
                 </div>
             ) : (
                 <div className="orders-list">

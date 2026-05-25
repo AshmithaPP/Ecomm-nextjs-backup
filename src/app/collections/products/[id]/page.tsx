@@ -40,12 +40,12 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
                 authors: [{ name: 'Silkcurator' }],
                 robots: 'index, follow',
                 alternates: {
-                    canonical: `https://www.silkcurator.com/products/${slug}`,
+                    canonical: `https://www.silkcurator.com/collections/products/${slug}`,
                 },
                 openGraph: {
                     title: metaTitle,
                     description: metaDesc,
-                    url: `https://www.silkcurator.com/products/${slug}`,
+                    url: `https://www.silkcurator.com/collections/products/${slug}`,
                     siteName: 'Silkcurator',
                     images: primaryImage ? [{ url: primaryImage, width: 800, height: 600, alt: metaTitle }] : [],
                     locale: 'en_IN',

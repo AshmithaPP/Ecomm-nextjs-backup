@@ -203,7 +203,7 @@ const CheckoutPage = () => {
         return (
             <div className="container text-center py-5">
                 <h2 className="mb-4">Your cart is empty</h2>
-                <button className="btn btn-dark px-4 py-2" onClick={() => router.push('/products')}>Start Shopping</button>
+                <button className="btn btn-dark px-4 py-2" onClick={() => router.push('/collections/products')}>Start Shopping</button>
             </div>
         );
     }

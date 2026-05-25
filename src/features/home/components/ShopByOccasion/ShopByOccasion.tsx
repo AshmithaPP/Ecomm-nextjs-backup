@@ -25,18 +25,39 @@ interface ShopByOccasionProps {
     dynamicData?: OccasionItem[];
 }
 
+const slugify = (value: string) => value
+  .toString()
+  .trim()
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '');
+
+const normalizeOccasionUrl = (item: OccasionItem) => {
+  if (item.redirect_url?.includes('/collections/products?occasion=')) {
+    return item.redirect_url;
+  }
+
+  if (item.redirect_url?.startsWith('/occasion/')) {
+    const slug = item.redirect_url.split('/').pop() || slugify(item.name);
+    return `/collections/products?occasion=${encodeURIComponent(slug)}`;
+  }
+
+  const slug = slugify(item.name || '');
+  return `/collections/products?occasion=${encodeURIComponent(slug)}`;
+};
+
 const ShopByOccasion = ({ dynamicData }: ShopByOccasionProps) => {
   const displayData = dynamicData && dynamicData.length > 0 ? dynamicData.map(item => ({
     id: item.occasion_id,
     name: item.name,
     image: resolveMediaUrl(item.image_url),
-    url: item.redirect_url
+    url: normalizeOccasionUrl(item)
   })) : [
-    { id: 1, name: 'Wedding', image: bridalSaree, url: '/occasion/wedding' },
-    { id: 2, name: 'Engagement', image: lightweightSilk, url: '/occasion/engagement' },
-    { id: 3, name: 'Festival', image: traditionalSilk, url: '/occasion/festival' },
-    { id: 4, name: 'Reception', image: collection1, url: '/occasion/reception' },
-    { id: 5, name: 'Gift Sarees', image: collection2, url: '/occasion/gift' },
+    { id: 1, name: 'Wedding', image: bridalSaree, url: '/collections/products?occasion=wedding' },
+    { id: 2, name: 'Engagement', image: lightweightSilk, url: '/collections/products?occasion=engagement' },
+    { id: 3, name: 'Festival', image: traditionalSilk, url: '/collections/products?occasion=festival' },
+    { id: 4, name: 'Reception', image: collection1, url: '/collections/products?occasion=reception' },
+    { id: 5, name: 'Gift Sarees', image: collection2, url: '/collections/products?occasion=gifting' },
   ];
 
   return (

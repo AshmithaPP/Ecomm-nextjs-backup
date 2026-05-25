@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './ShopByCollections.module.css';
 import ProductCard from 'components/ui/ProductCard';
 import ArrowButton from 'components/common/ArrowButton';
@@ -23,6 +24,7 @@ const ShopByCollections = ({
     subtitle = "Curated selections for every occasion",
     products: initialProducts = [] 
 }: ShopByCollectionsProps) => {
+    const router = useRouter();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
@@ -160,7 +162,7 @@ const ShopByCollections = ({
             </div>
 
             <div className={styles.footerActions}>
-                <button className={styles.exploreMoreBtn}>
+                <button className={styles.exploreMoreBtn} onClick={() => router.push('/collections/products')}>
                     <span>Explore More</span>
                 </button>
             </div>

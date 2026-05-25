@@ -24,7 +24,7 @@ const HeroSection = ({ dynamicData }: HeroSectionProps) => {
         subtitle: "Handwoven heritage. Pure mulberry silk.\nAuthentic zari.",
         cta: {
             text: "Explore Collections",
-            redirect_url: "/products"
+            redirect_url: "/collections/products"
         },
         image_url: heroRight
     };

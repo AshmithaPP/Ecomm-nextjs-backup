@@ -5,12 +5,22 @@ const nextConfig: NextConfig = {
     return [
       {
         source: '/cart',
-        destination: '/products',
+        destination: '/collections/products',
         permanent: true,
       },
       {
         source: '/shop-sarees',
-        destination: '/products',
+        destination: '/collections/products',
+        permanent: true,
+      },
+      {
+        source: '/products',
+        destination: '/collections/products',
+        permanent: true,
+      },
+      {
+        source: '/products/:id',
+        destination: '/collections/products/:id',
         permanent: true,
       },
       {

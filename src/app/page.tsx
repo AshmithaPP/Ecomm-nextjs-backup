@@ -8,6 +8,7 @@ import ShopByOccasion from 'features/home/components/ShopByOccasion/ShopByOccasi
 import TrendingPicks from 'features/home/components/TrendingPicks/TrendingPicks';
 import ShopByPrice from 'features/home/components/ShopByPrice/ShopByPrice';
 import Testimonials from 'features/home/components/Testimonials/Testimonials';
+import CustomerFavorites from 'features/home/components/CustomerFavorites/CustomerFavorites';
 import BlogSection from 'features/home/components/BlogSection/BlogSection';
 import NewsletterSection from 'features/home/components/NewsletterSection/NewsletterSection';
 import { useHomeStore } from '@/store/homeStore';
@@ -99,6 +100,9 @@ export default function Home() {
       {homeData.price_filters?.length > 0 && (
         <ShopByPrice data={homeData.price_filters} />
       )}
+
+      {/* 📹 CUSTOMER FAVORITES (VIDEO REELS) */}
+      <CustomerFavorites />
 
       {/* 💬 TESTIMONIALS */}
       {homeData.testimonials?.length > 0 && (

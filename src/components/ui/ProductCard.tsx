@@ -39,7 +39,17 @@ const ProductCard = ({ product }: { product: any }) => {
     const existingCartItem = cartItems.find((item: any) => item.product_id === pid || item.product_id === Number(pid));
 
     const handleCardClick = () => {
-        router.push(`/products/${slug || pid}`);
+        const resolvedSlug = slug || (displayTitle
+            ? displayTitle
+                .toLowerCase()
+                .trim()
+                .replace(/['']/g, '')          // remove apostrophes
+                .replace(/[^a-z0-9\s-]/g, '')  // strip remaining special chars
+                .replace(/\s+/g, '-')           // spaces → hyphens
+                .replace(/-+/g, '-')            // collapse double hyphens
+                .replace(/^-|-$/g, '')          // trim edge hyphens
+            : pid);
+        router.push(`/collections/products/${resolvedSlug}`);
     };
 
     const handleAddToCart = async (e: React.MouseEvent) => {

@@ -99,7 +99,7 @@ const ProductInfo = ({ product }: any) => {
         // Construct the live URL using the production domain instead of localhost
         const liveUrl = typeof window !== 'undefined'
             ? `https://www.silkcurator.com${window.location.pathname}`
-            : `https://www.silkcurator.com/products/${product.slug || ''}`;
+            : `https://www.silkcurator.com/collections/products/${product.slug || ''}`;
 
         const discountPercent = currentPrice?.mrp && parseFloat(currentPrice.mrp) > parseFloat(currentPrice.selling_price)
             ? Math.round(((parseFloat(currentPrice.mrp) - parseFloat(currentPrice.selling_price)) / parseFloat(currentPrice.mrp)) * 100)

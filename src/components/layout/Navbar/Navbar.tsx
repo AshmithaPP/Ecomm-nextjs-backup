@@ -88,6 +88,13 @@ const Navbar = () => {
 
     const isActive = (path: string) => pathname === path;
 
+    const getNormalizedPath = (path: string) => {
+        if (!path) return '';
+        if (path === '/products') return '/collections/products';
+        if (path.startsWith('/products/')) return path.replace('/products/', '/collections/products/');
+        return path;
+    };
+
     return (
         <div className="navbar-wrapper">
             <div 
@@ -112,21 +119,24 @@ const Navbar = () => {
                 <div className="nav-inner-content">
                     <div className={`nav-links${menuOpen ? ' show' : ''}`}>
                         {navItems.length > 0 ? (
-                            navItems.map((item) => (
-                                <Link 
-                                    key={item.menu_id}
-                                    href={item.route_path} 
-                                    target={item.open_in_new_tab ? '_blank' : undefined}
-                                    className={`nav-link${isActive(item.route_path) ? ' active' : ''}`}
-                                    onClick={() => setMenuOpen(false)}
-                                >
-                                    {item.title}
-                                </Link>
-                            ))
+                            navItems.map((item) => {
+                                const normalizedPath = getNormalizedPath(item.route_path);
+                                return (
+                                    <Link 
+                                        key={item.menu_id}
+                                        href={normalizedPath} 
+                                        target={item.open_in_new_tab ? '_blank' : undefined}
+                                        className={`nav-link${isActive(normalizedPath) ? ' active' : ''}`}
+                                        onClick={() => setMenuOpen(false)}
+                                    >
+                                        {item.title}
+                                    </Link>
+                                );
+                            })
                         ) : (
                             <>
                                 <Link href="/" className={`nav-link${isActive('/') ? ' active' : ''}`}>Home</Link>
-                                <Link href="/products" className={`nav-link${isActive('/products') ? ' active' : ''}`}>Shop Sarees</Link>
+                                <Link href="/collections/products" className={`nav-link${isActive('/collections/products') ? ' active' : ''}`}>Shop Sarees</Link>
                                 <Link href="/occasions" className={`nav-link${isActive('/occasions') ? ' active' : ''}`}>Occasions</Link>
                                 <Link href="/heritage" className={`nav-link${isActive('/heritage') ? ' active' : ''}`}>Heritage</Link>
                                 <Link href="/contact" className={`nav-link${isActive('/contact') ? ' active' : ''}`}>Contact Us</Link>

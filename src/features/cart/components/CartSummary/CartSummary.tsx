@@ -38,7 +38,7 @@ const CartSummary = () => {
             </button>
 
             <div className="continue-shopping text-center">
-                <button className="btn btn-link text-dark text-decoration-none d-inline-flex align-items-center" onClick={() => router.push('/products')}>
+                <button className="btn btn-link text-dark text-decoration-none d-inline-flex align-items-center" onClick={() => router.push('/collections/products')}>
                     <i className="bi bi-arrow-left-square me-2"></i> Continue Shopping
                 </button>
             </div>

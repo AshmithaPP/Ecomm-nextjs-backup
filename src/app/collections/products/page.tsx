@@ -72,7 +72,7 @@ const ProductsContent = () => {
 
     const breadcrumbItems = [
         { label: 'Home', path: '/' },
-        { label: 'Shop', path: '/products' }
+        { label: 'Collections', path: '/collections/products' }
     ];
 
     if (error) {

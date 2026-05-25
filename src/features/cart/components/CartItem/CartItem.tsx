@@ -15,7 +15,7 @@ const CartItem = ({ item }: CartItemProps) => {
     const router = useRouter();
 
     const handleNavigate = () => {
-        router.push(`/products/${item.slug || item.product_id}`);
+        router.push(`/collections/products/${item.slug || item.product_id}`);
     };
 
     const handleIncrement = async () => {

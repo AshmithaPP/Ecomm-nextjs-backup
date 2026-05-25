@@ -70,7 +70,7 @@ const WishlistPage = () => {
                                     <i className="bi bi-heart pulse-heart" style={{ fontSize: '3rem', color: '#ccc' }}></i>
                                     <h4 className="mt-3">Your wishlist is empty</h4>
                                     <p className="text-muted">Browse our collection and add your favorite sarees to the wishlist!</p>
-                                    <Link href="/products" className="btn btn-dark mt-3 px-4 py-2">Continue Shopping</Link>
+                                    <Link href="/collections/products" className="btn btn-dark mt-3 px-4 py-2">Continue Shopping</Link>
                                 </div>
                             )}
                         </div>

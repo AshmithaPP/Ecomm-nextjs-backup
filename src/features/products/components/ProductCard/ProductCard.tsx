@@ -116,7 +116,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
         }
     };
     const handleNavigate = () => {
-        router.push(`/products/${slug || pid}`);
+        const resolvedSlug = slug || (displayTitle
+            ? displayTitle
+                .toLowerCase()
+                .trim()
+                .replace(/['']/g, '')          // remove apostrophes
+                .replace(/[^a-z0-9\s-]/g, '')  // strip remaining special chars
+                .replace(/\s+/g, '-')           // spaces → hyphens
+                .replace(/-+/g, '-')            // collapse double hyphens
+                .replace(/^-|-$/g, '')          // trim edge hyphens
+            : pid);
+        router.push(`/collections/products/${resolvedSlug}`);
     };
 
     return (

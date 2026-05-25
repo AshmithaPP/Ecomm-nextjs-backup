@@ -1,6 +1,5 @@
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
-// Derived base URL from API URL if image base URL is not explicitly configured
 const getFallbackImageBase = () => {
   if (process.env.NEXT_PUBLIC_IMAGE_BASE_URL) {
     return process.env.NEXT_PUBLIC_IMAGE_BASE_URL;
@@ -8,6 +7,9 @@ const getFallbackImageBase = () => {
   if (process.env.NEXT_PUBLIC_API_URL) {
     // Remove '/api' from the end of the URL to get the host base
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '');
+  }
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
   }
   return 'http://localhost:5000';
 };
@@ -25,32 +27,25 @@ export const resolveMediaUrl = (url: string | null | undefined): string => {
   // Expose backend API host base
   const apiHost = process.env.NEXT_PUBLIC_API_URL 
     ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api\/?$/, '') 
-    : 'http://localhost:5000';
+    : (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5000');
 
-  // If it starts with local development backend URL, replace it
-  if (url.startsWith('http://localhost:5000')) {
-    if (url.includes('/uploads/reviews/')) {
-      return url.replace('http://localhost:5000', apiHost);
+  // If it starts with local development backend URL, normalize it to the active host in the current browser.
+  const normalizeLocalBackendUrl = (url: string) => {
+    if (typeof window === 'undefined') return url;
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+
+    // If the app is served from localhost / 127.0.0.1, keep the original backend URL.
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return url;
     }
-    return url.replace('http://localhost:5000', IMAGE_BASE);
-  }
-  if (url.startsWith('https://localhost:5000')) {
-    if (url.includes('/uploads/reviews/')) {
-      return url.replace('https://localhost:5000', apiHost);
-    }
-    return url.replace('https://localhost:5000', IMAGE_BASE);
-  }
-  if (url.startsWith('http://127.0.0.1:5000')) {
-    if (url.includes('/uploads/reviews/')) {
-      return url.replace('http://127.0.0.1:5000', apiHost);
-    }
-    return url.replace('http://127.0.0.1:5000', IMAGE_BASE);
-  }
-  if (url.startsWith('https://127.0.0.1:5000')) {
-    if (url.includes('/uploads/reviews/')) {
-      return url.replace('https://127.0.0.1:5000', apiHost);
-    }
-    return url.replace('https://127.0.0.1:5000', IMAGE_BASE);
+
+    // If the app is served from a local network host, point the asset URL to the same host on port 5000.
+    return url.replace(/^https?:\/\/(localhost|127\.0\.0\.1):5000/, `${protocol}//${hostname}:5000`);
+  };
+
+  if (url.startsWith('http://localhost:5000') || url.startsWith('https://localhost:5000') || url.startsWith('http://127.0.0.1:5000') || url.startsWith('https://127.0.0.1:5000')) {
+    return normalizeLocalBackendUrl(url);
   }
 
   // If it's already an absolute external URL (e.g. S3 bucket, third-party, etc.), keep it as is

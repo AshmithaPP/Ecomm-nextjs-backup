@@ -103,13 +103,15 @@ const AboutPage: React.FC = () => {
             
             {/* About Section */}
             {isSectionEnabled(pageContent.about_section) && pageContent.about_section && (
-                <AboutSectionTwo 
-                    title={pageContent.about_section.section_title}
-                    description1={pageContent.about_section.description_1}
-                    description2={pageContent.about_section.description_2}
-                    quote={pageContent.about_section.quote}
-                    imageUrl={pageContent.about_section.image_url}
-                />
+                <div id="about-story">
+                    <AboutSectionTwo 
+                        title={pageContent.about_section.section_title}
+                        description1={pageContent.about_section.description_1}
+                        description2={pageContent.about_section.description_2}
+                        quote={pageContent.about_section.quote}
+                        imageUrl={pageContent.about_section.image_url}
+                    />
+                </div>
             )}
             
             {/* Heritage Section */}

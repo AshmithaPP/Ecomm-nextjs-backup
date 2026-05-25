@@ -1,0 +1,77 @@
+/* recentlyViewedCarousel.css */
+
+/* Skeleton/Shimmer Styling */
+@keyframes rv-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.rv-skeleton-card {
+    height: 420px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #eeeeee;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+.rv-skeleton-img {
+    width: 100%;
+    height: 250px;
+    border-radius: 8px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: rv-shimmer 1.5s infinite linear;
+}
+
+.rv-skeleton-title {
+    width: 80%;
+    height: 16px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: rv-shimmer 1.5s infinite linear;
+}
+
+.rv-skeleton-price {
+    width: 50%;
+    height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: rv-shimmer 1.5s infinite linear;
+}
+
+.rv-skeleton-button {
+    width: 100%;
+    height: 38px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e6e6e6 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: rv-shimmer 1.5s infinite linear;
+    margin-top: auto;
+}
+
+@media (max-width: 768px) {
+    .rv-skeleton-card {
+        height: 380px;
+    }
+    
+    .rv-skeleton-img {
+        height: 200px;
+    }
+}
+
+/* Compact padding for recently viewed track */
+.recently-viewed-section .related-products-track {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
