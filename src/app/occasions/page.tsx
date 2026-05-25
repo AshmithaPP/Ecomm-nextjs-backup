@@ -110,23 +110,23 @@ const OccasionsPage = () => {
 
                             return (
                                 <div key={occ.occasion_id || index} className="col-lg-4 col-md-6 mb-5">
-                                    <div className="occasion-premium-card">
-                                        <div className="occasion-image-box">
-                                            <img src={imageUrl} alt={occ.title ?? occ.name} className="occasion-card-img" />
-                                            <div className="occasion-card-overlay"></div>
-                                            <div className="occasion-accent-border"></div>
-                                        </div>
-                                        <div className="occasion-content-box">
-                                            <h3 className="occasion-card-title">{occ.title ?? occ.name}</h3>
-                                            <p className="occasion-card-desc">{occ.description ?? ''}</p>
-                                            <Link href={buildOccasionLink(occ)}>
-                                                <button className="occasion-card-btn">
+                                    <Link href={buildOccasionLink(occ)} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                                        <div className="occasion-premium-card" style={{ cursor: 'pointer' }}>
+                                            <div className="occasion-image-box">
+                                                <img src={imageUrl} alt={occ.title ?? occ.name} className="occasion-card-img" />
+                                                <div className="occasion-card-overlay"></div>
+                                                <div className="occasion-accent-border"></div>
+                                            </div>
+                                            <div className="occasion-content-box">
+                                                <h3 className="occasion-card-title">{occ.title ?? occ.name}</h3>
+                                                <p className="occasion-card-desc">{occ.description ?? ''}</p>
+                                                <div className="occasion-card-btn">
                                                     {occ.button_text ?? ''}
                                                     <i className="bi bi-arrow-right ms-2"></i>
-                                                </button>
-                                            </Link>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 </div>
                             );
                         })}

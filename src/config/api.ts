@@ -45,6 +45,10 @@ export const resolveMediaUrl = (url: string | null | undefined): string => {
   };
 
   if (url.startsWith('http://localhost:5000') || url.startsWith('https://localhost:5000') || url.startsWith('http://127.0.0.1:5000') || url.startsWith('https://127.0.0.1:5000')) {
+    const isImageBaseProduction = IMAGE_BASE && !IMAGE_BASE.includes('localhost') && !IMAGE_BASE.includes('127.0.0.1');
+    if (isImageBaseProduction) {
+      return url.replace(/^https?:\/\/(localhost|127\.0\.0\.1):5000/, IMAGE_BASE);
+    }
     return normalizeLocalBackendUrl(url);
   }
 

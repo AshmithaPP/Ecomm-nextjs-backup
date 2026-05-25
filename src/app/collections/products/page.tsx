@@ -18,15 +18,23 @@ const ProductsContent = () => {
     const [isSortOpen, setIsSortOpen] = useState(false);
     const { products, loading, error, fetchProducts, pagination, activeFilters } = useProductStore();
 
-    // 1. Sync URL -> Zustand on Mount
+    // 1. Sync URL -> Zustand on Mount & URL query changes
     useEffect(() => {
         const params: Record<string, string> = {};
         searchParams.forEach((value, key) => {
             params[key] = value;
         });
-        // Update store's activeFilters with URL params
-        useProductStore.setState({ activeFilters: params });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+        
+        // Deep compare to prevent infinite render loops
+        const currentActive = useProductStore.getState().activeFilters;
+        const keys1 = Object.keys(params);
+        const keys2 = Object.keys(currentActive);
+        const hasChanged = keys1.length !== keys2.length || keys1.some(k => params[k] !== currentActive[k]);
+        
+        if (hasChanged) {
+            useProductStore.setState({ activeFilters: params });
+        }
+    }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // 2. Sync Zustand -> URL & Fetch on changes
     useEffect(() => {
