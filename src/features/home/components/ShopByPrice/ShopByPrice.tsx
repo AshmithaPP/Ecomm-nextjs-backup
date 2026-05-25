@@ -17,39 +17,77 @@ const priceData = [
         title: 'Under ₹5k - Everyday Sarees',
         type: 'large',
         image: largeSaree,
-        url: '/shop?min_price=0&max_price=5000'
+        min_price: 0,
+        max_price: 5000
     },
     {
         id: 2,
         title: 'Under ₹5k - Everyday Sarees',
         type: 'small',
         image: everydaySaree,
-        url: '/shop?min_price=0&max_price=5000'
+        min_price: 0,
+        max_price: 5000
     },
     {
         id: 3,
         title: '₹5k – ₹10k - Office Wear Sarees',
         type: 'small',
         image: officeSaree,
-        url: '/shop?min_price=5000&max_price=10000'
+        min_price: 5000,
+        max_price: 10000
     },
     {
         id: 4,
         title: '₹10k – ₹20k - Wedding & Bridal Sarees',
         type: 'small',
         image: weddingSaree,
-        url: '/shop?min_price=10000&max_price=20000'
+        min_price: 10000,
+        max_price: 20000
     },
     {
         id: 5,
         title: '₹30k – ₹50k - Festive Wear Sarees',
         type: 'small',
         image: festiveSaree,
-        url: '/shop?min_price=30000&max_price=50000'
+        min_price: 30000,
+        max_price: 50000
     }
 ];
 
 import { resolveMediaUrl } from '@/config/api';
+
+const getFilterUrlFromLabel = (label: string, minPrice: any, maxPrice: any) => {
+    let url = `/collections/products?min_price=${minPrice}&max_price=${maxPrice}`;
+    const lowerLabel = label.toLowerCase();
+    
+    // Check categories
+    if (lowerLabel.includes('kurtis') || lowerLabel.includes('kurti')) {
+        url += '&category=kurtis';
+    } else if (lowerLabel.includes('lehanga') || lowerLabel.includes('lehnga')) {
+        url += '&category=lehanga';
+    } else if (lowerLabel.includes('lightweight')) {
+        url += '&category=lightweight-silk-sarees';
+    } else if (lowerLabel.includes('bridal') && lowerLabel.includes('kanchipuram')) {
+        url += '&category=bridal-kanchipuram-sarees';
+    } else if (lowerLabel.includes('saree') || lowerLabel.includes('sarees')) {
+        url += '&category=sarees';
+    } else if (lowerLabel.includes('ethnic') || lowerLabel.includes('women ethnic')) {
+        url += '&category=women-ethnic-wear';
+    }
+    
+    // Check occasions
+    if (lowerLabel.includes('office')) {
+        url += '&occasion=office-wear';
+    } else if (lowerLabel.includes('everyday')) {
+        url += '&occasion=everyday-wear';
+    } else if (lowerLabel.includes('wedding') || lowerLabel.includes('bridal')) {
+        url += '&occasion=bridal-wear';
+    } else if (lowerLabel.includes('festive')) {
+        url += '&occasion=festive-wear';
+    }
+    
+    return url;
+};
 
 interface ShopByPriceProps {
     data?: any[];
@@ -87,8 +125,11 @@ const ShopByPrice = ({ data }: ShopByPriceProps) => {
         image: item.image_url 
             ? resolveMediaUrl(item.image_url)
             : (index === 0 ? largeSaree : (index === 1 ? everydaySaree : (index === 2 ? officeSaree : (index === 3 ? weddingSaree : festiveSaree)))),
-        url: `/shop?min_price=${item.min_price}&max_price=${item.max_price}`
-    })) : priceData;
+        url: getFilterUrlFromLabel(item.label, item.min_price, item.max_price)
+    })) : priceData.map(item => ({
+        ...item,
+        url: getFilterUrlFromLabel(item.title, item.min_price, item.max_price)
+    }));
 
     // Layout configuration from data
     const largeCard = displayData.find(item => item.type === 'large');

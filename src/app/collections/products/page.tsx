@@ -38,15 +38,16 @@ const ProductsContent = () => {
 
     // 2. Sync Zustand -> URL & Fetch on changes
     useEffect(() => {
+        const latestFilters = useProductStore.getState().activeFilters;
         const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
 
         // Update URL to match Zustand state
-        Object.entries(activeFilters).forEach(([key, value]) => {
+        Object.entries(latestFilters).forEach(([key, value]) => {
             currentParams.set(key, value as string);
         });
 
-        // Remove keys that are NOT in activeFilters but are in the URL 
-        const activeKeys = Object.keys(activeFilters);
+        // Remove keys that are NOT in latestFilters but are in the URL 
+        const activeKeys = Object.keys(latestFilters);
         Array.from(searchParams.keys()).forEach(key => {
             if (!activeKeys.includes(key) && key !== 'page' && key !== 'limit' && key !== 'sort' && key !== 'category') {
                 currentParams.delete(key);

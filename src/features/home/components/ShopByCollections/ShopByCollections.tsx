@@ -162,7 +162,25 @@ const ShopByCollections = ({
             </div>
 
             <div className={styles.footerActions}>
-                <button className={styles.exploreMoreBtn} onClick={() => router.push('/collections/products')}>
+                <button 
+                    className={styles.exploreMoreBtn} 
+                    onClick={() => {
+                        const slugify = (value: string) => value
+                            .toString()
+                            .trim()
+                            .toLowerCase()
+                            .replace(/[^a-z0-9]+/g, '-')
+                            .replace(/^-+|-+$/g, '');
+                        
+                        const slug = slugify(title || '');
+                        // If it's the default/featured collections, go to main list, otherwise filter dynamically
+                        const targetUrl = title && title !== "Featured Collection" && title !== "Shop by Collections"
+                            ? `/collections/products?category=${encodeURIComponent(slug)}`
+                            : '/collections/products';
+                        
+                        router.push(targetUrl);
+                    }}
+                >
                     <span>Explore More</span>
                 </button>
             </div>

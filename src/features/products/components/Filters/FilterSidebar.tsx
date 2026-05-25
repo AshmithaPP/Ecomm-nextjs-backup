@@ -53,55 +53,62 @@ const FilterSidebar = () => {
             </div>
 
             {/* Price Range Section */}
-            {availableFilters.price_range && (
-                <FilterSection title="Price Range">
-                    <div className="price-range-content">
-                        <div className="price-range-values">
-                            <span className="price-label">₹{availableFilters.price_range.min}</span>
-                            <span className="price-label">₹{availableFilters.price_range.max}</span>
-                        </div>
+            {availableFilters.price_range && (Number(availableFilters.price_range.max) > 0 || activeFilters.min_price || activeFilters.max_price) && (() => {
+                const sliderMin = Math.min(Number(availableFilters.price_range.min), Number(activeFilters.min_price || availableFilters.price_range.min));
+                const sliderMax = Math.max(Number(availableFilters.price_range.max), Number(activeFilters.max_price || availableFilters.price_range.max));
+                const currentMax = Number(activeFilters.max_price || sliderMax);
+                const percent = sliderMax > sliderMin ? ((currentMax - sliderMin) / (sliderMax - sliderMin)) * 100 : 100;
+                
+                return (
+                    <FilterSection title="Price Range">
+                        <div className="price-range-content">
+                            <div className="price-range-values">
+                                <span className="price-label">₹{sliderMin}</span>
+                                <span className="price-label">₹{sliderMax}</span>
+                            </div>
 
-                        <div className="slider-container">
-                            <div className="slider-track"></div>
-                            <div 
-                                className="slider-filled-track" 
-                                style={{ 
-                                    width: `${((activeFilters.max_price || availableFilters.price_range.max) - availableFilters.price_range.min) / (availableFilters.price_range.max - availableFilters.price_range.min) * 100}%` 
-                                }}
-                            ></div>
-                            <input
-                                type="range"
-                                min={availableFilters.price_range.min}
-                                max={availableFilters.price_range.max}
-                                value={activeFilters.max_price || availableFilters.price_range.max}
-                                name="max"
-                                onChange={handlePriceChange}
-                                className="slider-input single-slider"
-                            />
-                        </div>
+                            <div className="slider-container">
+                                <div className="slider-track"></div>
+                                <div 
+                                    className="slider-filled-track" 
+                                    style={{ 
+                                        width: `${percent}%` 
+                                    }}
+                                ></div>
+                                <input
+                                    type="range"
+                                    min={sliderMin}
+                                    max={sliderMax}
+                                    value={currentMax}
+                                    name="max"
+                                    onChange={handlePriceChange}
+                                    className="slider-input single-slider"
+                                />
+                            </div>
 
-                        <div className="price-inputs-row">
-                            <input
-                                type="number"
-                                value={activeFilters.min_price || ''}
-                                name="min"
-                                onChange={handlePriceChange}
-                                className="price-box"
-                                placeholder="Min"
-                            />
-                            <span className="to-text">to</span>
-                            <input
-                                type="number"
-                                value={activeFilters.max_price || ''}
-                                name="max"
-                                onChange={handlePriceChange}
-                                className="price-box"
-                                placeholder="Max"
-                            />
+                            <div className="price-inputs-row">
+                                <input
+                                    type="number"
+                                    value={activeFilters.min_price || ''}
+                                    name="min"
+                                    onChange={handlePriceChange}
+                                    className="price-box"
+                                    placeholder="Min"
+                                />
+                                <span className="to-text">to</span>
+                                <input
+                                    type="number"
+                                    value={activeFilters.max_price || ''}
+                                    name="max"
+                                    onChange={handlePriceChange}
+                                    className="price-box"
+                                    placeholder="Max"
+                                />
+                            </div>
                         </div>
-                    </div>
-                </FilterSection>
-            )}
+                    </FilterSection>
+                );
+            })()}
 
             {/* Dynamic Attribute Sections */}
             {Object.entries(availableFilters).map(([key, items]: [string, any]) => {
