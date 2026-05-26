@@ -93,9 +93,7 @@ const ProductCard = ({ product }: { product: any }) => {
                         <span className={styles.priceCurrentBold}>₹{Math.round(priceNum).toLocaleString('en-IN')}</span>
                         <span className={styles.priceInfoIconNew} title="Inclusive of all taxes">ⓘ</span>
                     </div>
-                    <div className={styles.priceTaxesLabelNew}>
-                        (incl. of all taxes)
-                    </div>
+                 
                 </div>
             </div>
         </div>

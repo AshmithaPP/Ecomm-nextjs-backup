@@ -13,6 +13,7 @@ import { useSettingsStore } from '@/store/settingsStore';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { useWishlistStore } from '@/store/wishlistStore';
+import { useNavigationStore } from '@/store/navigationStore';
 import { LogOut, ChevronDown } from 'lucide-react';
 import { IMAGE_BASE, API_BASE, resolveMediaUrl } from '@/config/api';
 
@@ -20,8 +21,8 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     const pathname = usePathname();
     const router = useRouter();
-    const [navItems, setNavItems] = useState<any[]>([]);
     
+    const { navigationItems, fetchNavigation } = useNavigationStore();
     const { items: wishlistItems, fetchWishlist } = useWishlistStore();
     const { cart, fetchCart, setDrawerOpen } = useCartStore();
     const cartItems = cart.items || [];
@@ -35,22 +36,8 @@ const Navbar = () => {
         fetchSettings();
         fetchCart();
         fetchWishlist();
-    }, [fetchSettings, fetchCart, fetchWishlist]);
-
-    useEffect(() => {
-        const fetchNav = async () => {
-            try {
-                const response = await fetch(`${API_BASE}/navigation`);
-                const result = await response.json();
-                if (result.success && Array.isArray(result.data)) {
-                    setNavItems(result.data);
-                }
-            } catch (error) {
-                console.error('Error fetching dynamic navigation:', error);
-            }
-        };
-        fetchNav();
-    }, []);
+        fetchNavigation();
+    }, [fetchSettings, fetchCart, fetchWishlist, fetchNavigation]);
 
     const logoSrc = siteInfo.site_logo
         ? resolveMediaUrl(siteInfo.site_logo)
@@ -90,9 +77,7 @@ const Navbar = () => {
 
     const getNormalizedPath = (path: string) => {
         if (!path) return '';
-        if (path === '/products') return '/collections/products';
-        if (path.startsWith('/products/')) return path.replace('/products/', '/collections/products/');
-        return path;
+        return path.startsWith('/') ? path : `/${path}`;
     };
 
     return (
@@ -118,15 +103,32 @@ const Navbar = () => {
                 {/* Desktop Nav */}
                 <div className="nav-inner-content">
                     <div className={`nav-links${menuOpen ? ' show' : ''}`}>
-                        {navItems.length > 0 ? (
-                            navItems.map((item) => {
-                                const normalizedPath = getNormalizedPath(item.route_path);
+                        {navigationItems.length > 0 ? (
+                            navigationItems.map((item) => {
+                                const isExternal = item.menu_type === 'external';
+                                const path = isExternal ? item.route_path : getNormalizedPath(item.route_path);
+                                
+                                if (isExternal) {
+                                    return (
+                                        <a 
+                                            key={item.menu_id}
+                                            href={path} 
+                                            target={item.open_in_new_tab ? '_blank' : undefined}
+                                            rel={item.open_in_new_tab ? 'noopener noreferrer' : undefined}
+                                            className="nav-link"
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            {item.title}
+                                        </a>
+                                    );
+                                }
+
                                 return (
                                     <Link 
                                         key={item.menu_id}
-                                        href={normalizedPath} 
+                                        href={path} 
                                         target={item.open_in_new_tab ? '_blank' : undefined}
-                                        className={`nav-link${isActive(normalizedPath) ? ' active' : ''}`}
+                                        className={`nav-link${isActive(path) ? ' active' : ''}`}
                                         onClick={() => setMenuOpen(false)}
                                     >
                                         {item.title}
