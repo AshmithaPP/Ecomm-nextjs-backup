@@ -24,6 +24,7 @@ const OccasionsPage = () => {
         if (pageContent) {
             const metaTitle = pageContent.seo?.meta_title ?? pageContent.meta_title;
             const metaDescription = pageContent.seo?.meta_description ?? pageContent.meta_description;
+            const ogImage = pageContent.seo?.og_image ?? pageContent.og_image;
 
             if (metaTitle) {
                 document.title = metaTitle;
@@ -36,6 +37,31 @@ const OccasionsPage = () => {
                     const newMeta = document.createElement('meta');
                     newMeta.name = 'description';
                     newMeta.content = metaDescription;
+                    document.head.appendChild(newMeta);
+                }
+            }
+            if (ogImage) {
+                const resolvedOgImageUrl = resolveMediaUrl(ogImage);
+                
+                // Update or create og:image
+                const metaOgImage = document.querySelector('meta[property="og:image"]');
+                if (metaOgImage) {
+                    metaOgImage.setAttribute('content', resolvedOgImageUrl);
+                } else {
+                    const newMeta = document.createElement('meta');
+                    newMeta.setAttribute('property', 'og:image');
+                    newMeta.content = resolvedOgImageUrl;
+                    document.head.appendChild(newMeta);
+                }
+
+                // Update or create twitter:image
+                const metaTwitterImage = document.querySelector('meta[name="twitter:image"]');
+                if (metaTwitterImage) {
+                    metaTwitterImage.setAttribute('content', resolvedOgImageUrl);
+                } else {
+                    const newMeta = document.createElement('meta');
+                    newMeta.name = 'twitter:image';
+                    newMeta.content = resolvedOgImageUrl;
                     document.head.appendChild(newMeta);
                 }
             }

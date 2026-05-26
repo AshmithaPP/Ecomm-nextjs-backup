@@ -19,7 +19,7 @@ const AuthenticitySection = ({ heading, description, stats, badgeImage }: Authen
             <div className="authenticity-inner row m-0 w-100 align-items-center">
                 
                 {/* Left side content */}
-                <div className="col-lg-9 col-12 left-content px-0 pe-lg-4">
+                <div className={`${badgeImage ? 'col-lg-9' : 'col-12'} left-content px-0 pe-lg-4`}>
                     <h3 className="authenticity-heading">{heading}</h3>
                     <p className="authenticity-desc mt-3">{description}</p>
                     
@@ -34,15 +34,13 @@ const AuthenticitySection = ({ heading, description, stats, badgeImage }: Authen
                 </div>
 
                 {/* Right side badge */}
-                <div className="col-lg-3 col-12 d-flex justify-content-lg-end justify-content-center mt-4 mt-lg-0 px-0 badge-container">
-                    <div className="silk-mark-wrapper d-flex align-items-center justify-content-center">
-                        {badgeImage ? (
-                            <img src={badgeImage} alt="Silk Mark Certification" className="silk-mark-image" />
-                        ) : (
-                            <span className="placeholder-text">SILK MARK</span>
-                        )}
+                {badgeImage && (
+                    <div className="col-lg-3 col-12 d-flex justify-content-lg-end justify-content-center mt-4 mt-lg-0 px-0 badge-container">
+                        <div className="silk-mark-wrapper d-flex align-items-center justify-content-center">
+                            <img src={badgeImage} alt="Certification Badge" className="silk-mark-image" />
+                        </div>
                     </div>
-                </div>
+                )}
 
             </div>
         </div>

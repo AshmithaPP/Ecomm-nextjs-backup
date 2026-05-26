@@ -18,25 +18,35 @@ const ProductInfo = ({ product }: any) => {
     const router = useRouter();
     const { setSelectedVariant } = useProductStore();
     const { isAuthenticated } = useAuthStore();
-    const { addToCart, setDrawerOpen } = useCartStore();
+        const { cart, addToCart, updateQuantity, removeFromCart, setDrawerOpen } = useCartStore();
     const [isAddingToCart, setIsAddingToCart] = React.useState(false);
+    const [isUpdatingQty, setIsUpdatingQty] = React.useState(false);
     const [isBuyingNow, setIsBuyingNow] = React.useState(false);
     const { items: wishlistItems, toggleWishlist } = useWishlistStore();
     const [quantity, setQuantity] = React.useState(1);
 
-    const isLiked = wishlistItems.some((item: any) => item.product_id === product?.product_id);
+    const isLiked = isAuthenticated && wishlistItems.some((item: any) => item.product_id === product?.product_id);
+
+    const variantId = product.selected_variant?.variant_id || product.default_variant_id;
+    const cartItems = cart?.items || [];
+    const existingCartItem = cartItems.find((item: any) => 
+        (item.product_id === product.product_id || item.product_id === Number(product.product_id)) &&
+        (!item.variant_id || item.variant_id === variantId)
+    );
 
     const handleWishlistToggle = (e: any) => {
         e.stopPropagation();
+        if (!isAuthenticated) {
+            router.push(`/login?redirect=${window.location.pathname}`);
+            return;
+        }
         toggleWishlist(product.product_id);
     };
 
     const handleBuyNow = async () => {
-        const variantId = product.selected_variant?.variant_id || product.default_variant_id;
-
         setIsBuyingNow(true);
         try {
-            const result = await addToCart(product.product_id, variantId, quantity);
+            const result = await addToCart(product.product_id, variantId, existingCartItem ? existingCartItem.quantity : quantity);
             if (result.success) {
                 router.push('/checkout');
             } else {
@@ -47,8 +57,63 @@ const ProductInfo = ({ product }: any) => {
         }
     };
 
+    const handleDecreaseQty = async () => {
+        if (isAddingToCart || isUpdatingQty) return;
+
+        if (existingCartItem) {
+            setIsUpdatingQty(true);
+            try {
+                if (existingCartItem.quantity > 1) {
+                    await updateQuantity(existingCartItem.cart_item_id, existingCartItem.quantity - 1);
+                } else {
+                    await removeFromCart(existingCartItem.cart_item_id);
+                }
+            } finally {
+                setIsUpdatingQty(false);
+            }
+        } else {
+            setQuantity(prev => Math.max(1, prev - 1));
+        }
+    };
+
+    const handleIncreaseQty = async () => {
+        if (isAddingToCart || isUpdatingQty) return;
+
+        if (existingCartItem) {
+            setIsUpdatingQty(true);
+            try {
+                if (existingCartItem.quantity < 10) {
+                    await updateQuantity(existingCartItem.cart_item_id, existingCartItem.quantity + 1);
+                } else {
+                    toast.warning("Maximum limit of 10 reached");
+                }
+            } finally {
+                setIsUpdatingQty(false);
+            }
+        } else {
+            const nextQty = quantity + 1;
+            setIsAddingToCart(true);
+            try {
+                const result = await addToCart(product.product_id, variantId, nextQty);
+                if (result.success) {
+                    toast.success("Added to cart!");
+                    setDrawerOpen(true);
+                } else {
+                    toast.error(result.message || "Failed to add to cart");
+                }
+            } finally {
+                setIsAddingToCart(false);
+            }
+        }
+    };
+
     const handleAddToCart = async () => {
-        const variantId = product.selected_variant?.variant_id || product.default_variant_id;
+        if (isAddingToCart || isUpdatingQty) return;
+
+        if (existingCartItem) {
+            setDrawerOpen(true);
+            return;
+        }
 
         setIsAddingToCart(true);
         try {
@@ -106,10 +171,12 @@ const ProductInfo = ({ product }: any) => {
             : 0;
 
         const discountText = discountPercent > 0 
-            ? `Get up to ${discountPercent}% OFF on your first order. Also grab extra discount on exclusive handloom sarees!`
-            : 'Get the best price and pure silk assurance on exclusive handloom sarees!';
+            ? `Get up to ${discountPercent}% OFF on this item!`
+            : `Get the best price on ${name}!`;
 
-        const message = `Hey, check out this product on The Silk Curator!
+        const message = `Hey, check out this product on ${brand || 'our store'}:
+
+${name}
 
 ${discountText}
 
@@ -126,7 +193,8 @@ ${liveUrl}`;
             <div className="mb-2 position-relative">
                 <div className="d-flex justify-content-between align-items-start">
                     <div>
-                        <span className="bridal-badge mb-1 d-inline-block">Bridal Special</span>
+                        {product.badge && <span className="bridal-badge mb-1 d-inline-block">{product.badge}</span>}
+                        {product.tag && <span className="bridal-badge mb-1 d-inline-block">{product.tag}</span>}
                         <h1 className="product-title m-0 text-capitalize">{name}</h1>
                     </div>
                     <button
@@ -228,39 +296,40 @@ ${liveUrl}`;
                         <div className={`stock-title mb-0 ${isOutOfStock ? 'text-danger' : 'text-success'}`} style={{ fontSize: '14px', textTransform: 'capitalize' }}>
                             {isOutOfStock ? 'Out of Stock' : (selected_variant?.stock?.status?.replace('_', ' ') || 'In Stock')}
                         </div>
-                        {!isOutOfStock && (
+                        {!isOutOfStock && product.stock_meta?.urgency_text && (
                             <div className="stock-subtitle small" style={{ fontSize: '12px' }}>
-                                {product.stock_meta?.urgency_text || 'High demand – selling fast'}
+                                {product.stock_meta.urgency_text}
                             </div>
                         )}
                     </div>
                 </div>
-                {!isOutOfStock && <div className="viewing-count small">12 people viewing</div>}
             </div>
 
             {/* Delivery & Policies Section */}
-            <div className="delivery-policies-section mb-3 p-2 bg-light rounded-3">
-                <div className="row g-2">
-                    {product.delivery?.freeDelivery && (
-                        <div className="col-6 col-md-4 d-flex align-items-center gap-1">
-                            <i className="bi bi-truck text-success"></i>
-                            <span style={{ fontSize: '12px', fontWeight: '500' }}>Free Delivery</span>
-                        </div>
-                    )}
-                    {product.delivery?.codAvailable && (
-                        <div className="col-6 col-md-4 d-flex align-items-center gap-1">
-                            <i className="bi bi-cash-stack text-success"></i>
-                            <span style={{ fontSize: '12px', fontWeight: '500' }}>COD Available</span>
-                        </div>
-                    )}
-                    {product.policies?.returnDays && (
-                        <div className="col-6 col-md-4 d-flex align-items-center gap-1">
-                            <i className="bi bi-arrow-counterclockwise text-success"></i>
-                            <span style={{ fontSize: '12px', fontWeight: '500' }}>{product.policies.returnDays} Days Return</span>
-                        </div>
-                    )}
+            {(product.delivery || product.policies) && (
+                <div className="delivery-policies-section mb-3 p-2 bg-light rounded-3">
+                    <div className="row g-2">
+                        {product.delivery?.freeDelivery && (
+                            <div className="col-6 col-md-4 d-flex align-items-center gap-1">
+                                <i className="bi bi-truck text-success"></i>
+                                <span style={{ fontSize: '12px', fontWeight: '500' }}>Free Delivery</span>
+                            </div>
+                        )}
+                        {product.delivery?.codAvailable && (
+                            <div className="col-6 col-md-4 d-flex align-items-center gap-1">
+                                <i className="bi bi-cash-stack text-success"></i>
+                                <span style={{ fontSize: '12px', fontWeight: '500' }}>COD Available</span>
+                            </div>
+                        )}
+                        {product.policies?.returnDays && (
+                            <div className="col-6 col-md-4 d-flex align-items-center gap-1">
+                                <i className="bi bi-arrow-counterclockwise text-success"></i>
+                                <span style={{ fontSize: '12px', fontWeight: '500' }}>{product.policies.returnDays} Days Return</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Action Buttons */}
             <div className="action-buttons-container d-flex flex-column gap-2 mb-3">
@@ -278,32 +347,36 @@ ${liveUrl}`;
                         <button 
                             type="button"
                             className="product-qty-btn"
-                            onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
-                            disabled={quantity <= 1 || isOutOfStock || isAddingToCart || isBuyingNow}
+                            onClick={handleDecreaseQty}
+                            disabled={isOutOfStock || isAddingToCart || isUpdatingQty || isBuyingNow || (!existingCartItem && quantity <= 1)}
                         >
                             −
                         </button>
                         <span className="product-qty-val">
-                            {quantity}
+                            {isUpdatingQty ? (
+                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" style={{ width: '14px', height: '14px' }}></span>
+                            ) : (
+                                existingCartItem ? existingCartItem.quantity : quantity
+                            )}
                         </span>
                         <button 
                             type="button"
                             className="product-qty-btn"
-                            onClick={() => setQuantity(prev => Math.min(10, prev + 1))}
-                            disabled={quantity >= 10 || isOutOfStock || isAddingToCart || isBuyingNow}
+                            onClick={handleIncreaseQty}
+                            disabled={isOutOfStock || isAddingToCart || isUpdatingQty || isBuyingNow || (existingCartItem ? existingCartItem.quantity >= 10 : quantity >= 10)}
                         >
                             +
                         </button>
                     </div>
                     <button
                         className="btn btn-add-cart flex-grow-1 d-flex justify-content-center align-items-center gap-2 m-0"
-                        disabled={isOutOfStock || isAddingToCart || isBuyingNow}
+                        disabled={isOutOfStock || isAddingToCart || isUpdatingQty || isBuyingNow}
                         onClick={handleAddToCart}
                         style={{ height: '50px', fontSize: '16px' }}
                     >
                         {isAddingToCart ? (
                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        ) : 'Add to Cart'}
+                        ) : (existingCartItem ? 'Added! View Cart' : 'Add to Cart')}
                     </button>
                 </div>
                 <button 

@@ -5,6 +5,7 @@ interface ProductState {
     products: any[];
     availableFilters: any;
     activeFilters: any;
+    absolutePriceRange: { min: number; max: number } | null;
     pagination: { current_page: number; total_pages: number; total_products: number };
     loading: boolean;
     error: string | null;
@@ -23,6 +24,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
     products: [],
     availableFilters: {},
     activeFilters: {},
+    absolutePriceRange: null,
     pagination: { current_page: 1, total_pages: 1, total_products: 0 },
     loading: false,
     error: null,
@@ -61,7 +63,7 @@ export const useProductStore = create<ProductState>((set, get) => ({
     },
 
     clearAllFilters: () => {
-        set({ activeFilters: {} });
+        set({ activeFilters: {}, absolutePriceRange: null });
     },
 
     fetchProducts: async (queryParams = null) => {
@@ -103,11 +105,24 @@ export const useProductStore = create<ProductState>((set, get) => ({
                     };
                 });
 
-                set({ 
-                    products: mappedProducts, 
-                    availableFilters: data.filters,
-                    pagination: data.pagination,
-                    loading: false 
+                const hasNoFilters = Object.keys(get().activeFilters).filter(k => k !== 'limit' && k !== 'page').length === 0;
+                
+                const newAbsoluteRange = data.filters?.price_range 
+                    ? { min: Number(data.filters.price_range.min), max: Number(data.filters.price_range.max) }
+                    : null;
+
+                set((state) => {
+                    const nextAbsoluteRange = state.absolutePriceRange && !hasNoFilters 
+                        ? state.absolutePriceRange 
+                        : newAbsoluteRange;
+
+                    return {
+                        products: mappedProducts,
+                        availableFilters: data.filters,
+                        absolutePriceRange: nextAbsoluteRange,
+                        pagination: data.pagination,
+                        loading: false
+                    };
                 });
             } else {
                 set({ error: "Failed to fetch products", loading: false });

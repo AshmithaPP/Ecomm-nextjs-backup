@@ -12,7 +12,7 @@ const WishlistButton = ({ product }: { product: any }) => {
     const router = useRouter();
     const pathname = usePathname();
     const pid = product?.product_id || product?.id;
-    const isLiked = isInWishlist(pid);
+    const isLiked = isAuthenticated && isInWishlist(pid);
 
     const toggleLike = (e: React.MouseEvent) => {
         e.stopPropagation();

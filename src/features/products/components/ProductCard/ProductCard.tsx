@@ -30,7 +30,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const rawId = product.product_id || product.id || (product.product && (product.product.product_id || product.product.id));
     const pid = (typeof rawId === 'object' && rawId !== null) ? (rawId.id || rawId.product_id) : rawId;
     
-    const isLiked = isInWishlist(pid);
+    const isLiked = isAuthenticated && isInWishlist(pid);
     const displayTitle = name || title;
     
     const displayPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : price;

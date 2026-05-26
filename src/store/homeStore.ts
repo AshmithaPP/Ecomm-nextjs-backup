@@ -27,7 +27,7 @@ export const useHomeStore = create<HomeState>((set) => ({
     fetchHomeData: async () => {
         set({ loading: true, error: null });
         try {
-            const response = await fetch(`${API_BASE}/home`);
+            const response = await fetch(`${API_BASE}/home`, { cache: 'no-store' });
             if (!response.ok) throw new Error('Failed to fetch homepage data');
             const result = await response.json();
             if (result.success) {
@@ -43,7 +43,7 @@ export const useHomeStore = create<HomeState>((set) => ({
     fetchFavorites: async () => {
         set({ favoritesLoading: true, favoritesError: null });
         try {
-            const response = await fetch(`${API_BASE}/customer-favorites`);
+            const response = await fetch(`${API_BASE}/customer-favorites`, { cache: 'no-store' });
             if (!response.ok) throw new Error('Failed to fetch customer favorites');
             const result = await response.json();
             if (result.success) {

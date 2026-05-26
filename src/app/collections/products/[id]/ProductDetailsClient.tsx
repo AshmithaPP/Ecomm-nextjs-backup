@@ -85,12 +85,13 @@ const ProductDetailsClient = () => {
     ];
 
     // Dynamically derive Authenticity Section data
-    const hasAuthenticityData = (product.originInfo && Object.keys(product.originInfo).length > 0) || (product.stats && product.stats.length > 0);
+    const originInfo = product.origin_info || product.originInfo;
+    const hasAuthenticityData = originInfo && (originInfo.heading || originInfo.description || originInfo.badgeImage || originInfo.badge_image);
     const authenticityData = hasAuthenticityData ? {
-        heading: product.originInfo?.heading || '',
-        description: product.originInfo?.description || '',
-        stats: product.stats || [],
-        badgeImage: product.originInfo?.badgeImage || null
+        heading: originInfo?.heading || '',
+        description: originInfo?.description || '',
+        stats: originInfo?.stats || product.stats || [],
+        badgeImage: originInfo?.badgeImage || originInfo?.badge_image || null
     } : null;
 
     return (
@@ -109,6 +110,7 @@ const ProductDetailsClient = () => {
                     <ProductImage
                         media={product.selected_variant?.images || product.media}
                         video={product.media?.video}
+                        product={product}
                     />
                 </div>
 
@@ -138,6 +140,8 @@ const ProductDetailsClient = () => {
                     <ProductSpecifications
                         specifications={product.specifications || []}
                         services={product.services || []}
+                        stats={product.stats || []}
+                        originInfo={product.origin_info || product.originInfo}
                     />
                 </div>
             </div>

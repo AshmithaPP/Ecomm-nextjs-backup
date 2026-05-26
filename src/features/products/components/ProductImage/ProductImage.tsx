@@ -2,8 +2,17 @@
 import React, { useState } from 'react';
 import './productImage.css';
 import { resolveMediaUrl } from '@/config/api';
+import { useWishlistStore } from '@/store/wishlistStore';
+import { useAuthStore } from '@/store/authStore';
+import { useRouter, usePathname } from 'next/navigation';
 
-const ProductImage = ({ media, video }: any) => {
+const ProductImage = ({ media, video, product }: any) => {
+    const router = useRouter();
+    const pathname = usePathname();
+    const { isAuthenticated } = useAuthStore();
+    const { items: wishlistItems, toggleWishlist } = useWishlistStore();
+    const isLiked = isAuthenticated && wishlistItems.some((item: any) => item.product_id === product?.product_id);
+
     // Support both variant format (gallery / primary) and main product format (gallery_images / primary_image)
     let galleryImages: string[] = [];
     if (media?.gallery && Array.isArray(media.gallery) && media.gallery.length > 0) {
@@ -71,11 +80,54 @@ const ProductImage = ({ media, video }: any) => {
 
                 {/* Wishlist/Share Icons */}
                 <div className="image-action-overlay">
-                    <button className="image-action-btn share-btn" aria-label="Share">
+                    <button 
+                        className="image-action-btn gallery-share-btn" 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (!product) return;
+                            const liveUrl = typeof window !== 'undefined'
+                                ? `https://www.silkcurator.com${window.location.pathname}`
+                                : `https://www.silkcurator.com/collections/products/${product.slug || ''}`;
+
+                            const currentPrice = product.selected_variant?.price || product.price;
+                            const discountPercent = currentPrice?.mrp && parseFloat(currentPrice.mrp) > parseFloat(currentPrice.selling_price)
+                                ? Math.round(((parseFloat(currentPrice.mrp) - parseFloat(currentPrice.selling_price)) / parseFloat(currentPrice.mrp)) * 100)
+                                : 0;
+
+                            const discountText = discountPercent > 0 
+                                ? `Get up to ${discountPercent}% OFF on this item!`
+                                : `Get the best price on ${product.name}!`;
+
+                            const message = `Hey, check out this product on ${product.brand || 'our store'}:
+
+${product.name}
+
+${discountText}
+
+${liveUrl}`;
+
+                            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                            window.open(whatsappUrl, "_blank");
+                        }}
+                        aria-label="Share"
+                    >
                         <i className="bi bi-share"></i>
                     </button>
-                    <button className="image-action-btn wishlist-btn" aria-label="Add to Wishlist">
-                        <i className="bi bi-heart"></i>
+                    <button 
+                        className={`image-action-btn gallery-wishlist-btn`} 
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (!isAuthenticated) {
+                                router.push(`/login?redirect=${pathname}`);
+                                return;
+                            }
+                            if (product?.product_id) {
+                                toggleWishlist(product.product_id);
+                            }
+                        }}
+                        aria-label="Add to Wishlist"
+                    >
+                        <i className={`bi ${isLiked ? 'bi-heart-fill text-danger' : 'bi-heart'}`}></i>
                     </button>
                 </div>
 

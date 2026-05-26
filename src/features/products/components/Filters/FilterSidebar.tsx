@@ -6,7 +6,7 @@ import FilterSection from './FilterSection';
 import './filters.css';
 
 const FilterSidebar = () => {
-    const { availableFilters, activeFilters, updateFilter, setPriceRange, clearAllFilters } = useProductStore();
+    const { availableFilters, activeFilters, absolutePriceRange, updateFilter, setPriceRange, clearAllFilters } = useProductStore();
 
     // Mapping UI keys to API keys
     const apiKeyMap: Record<string, string> = {
@@ -54,17 +54,23 @@ const FilterSidebar = () => {
 
             {/* Price Range Section */}
             {availableFilters.price_range && (Number(availableFilters.price_range.max) > 0 || activeFilters.min_price || activeFilters.max_price) && (() => {
-                const sliderMin = Math.min(Number(availableFilters.price_range.min), Number(activeFilters.min_price || availableFilters.price_range.min));
-                const sliderMax = Math.max(Number(availableFilters.price_range.max), Number(activeFilters.max_price || availableFilters.price_range.max));
-                const currentMax = Number(activeFilters.max_price || sliderMax);
-                const percent = sliderMax > sliderMin ? ((currentMax - sliderMin) / (sliderMax - sliderMin)) * 100 : 100;
+                const minLimit = absolutePriceRange ? absolutePriceRange.min : Number(availableFilters.price_range.min);
+                const maxLimit = absolutePriceRange ? absolutePriceRange.max : Number(availableFilters.price_range.max);
+                
+                const safeMin = minLimit === maxLimit ? 0 : minLimit;
+                const safeMax = maxLimit;
+
+                const currentMin = activeFilters.min_price !== undefined ? Number(activeFilters.min_price) : safeMin;
+                const currentMax = activeFilters.max_price !== undefined ? Number(activeFilters.max_price) : safeMax;
+                
+                const percent = safeMax > safeMin ? ((currentMax - safeMin) / (safeMax - safeMin)) * 100 : 100;
                 
                 return (
                     <FilterSection title="Price Range">
                         <div className="price-range-content">
                             <div className="price-range-values">
-                                <span className="price-label">₹{sliderMin}</span>
-                                <span className="price-label">₹{sliderMax}</span>
+                                <span className="price-label">₹{currentMin}</span>
+                                <span className="price-label">₹{currentMax}</span>
                             </div>
 
                             <div className="slider-container">
@@ -77,8 +83,8 @@ const FilterSidebar = () => {
                                 ></div>
                                 <input
                                     type="range"
-                                    min={sliderMin}
-                                    max={sliderMax}
+                                    min={safeMin}
+                                    max={safeMax}
                                     value={currentMax}
                                     name="max"
                                     onChange={handlePriceChange}
@@ -89,7 +95,7 @@ const FilterSidebar = () => {
                             <div className="price-inputs-row">
                                 <input
                                     type="number"
-                                    value={activeFilters.min_price || ''}
+                                    value={activeFilters.min_price !== undefined ? activeFilters.min_price : ''}
                                     name="min"
                                     onChange={handlePriceChange}
                                     className="price-box"
@@ -98,7 +104,7 @@ const FilterSidebar = () => {
                                 <span className="to-text">to</span>
                                 <input
                                     type="number"
-                                    value={activeFilters.max_price || ''}
+                                    value={activeFilters.max_price !== undefined ? activeFilters.max_price : ''}
                                     name="max"
                                     onChange={handlePriceChange}
                                     className="price-box"

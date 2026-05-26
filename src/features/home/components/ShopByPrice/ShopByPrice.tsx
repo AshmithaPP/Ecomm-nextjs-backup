@@ -57,8 +57,49 @@ const priceData = [
 import { resolveMediaUrl } from '@/config/api';
 
 const getFilterUrlFromLabel = (label: string, minPrice: any, maxPrice: any) => {
-    let url = `/collections/products?min_price=${minPrice}&max_price=${maxPrice}`;
+    let resolvedMin = minPrice;
+    let resolvedMax = maxPrice;
+    
     const lowerLabel = label.toLowerCase();
+    
+    // Parse label like "500 to 3k", "Under 5k", "30k – 50k", or "5k - 10k" to avoid database misalignments
+    const cleanText = lowerLabel.replace(/₹/g, '').replace(/,/g, '');
+    
+    if (cleanText.includes('under') || cleanText.includes('below')) {
+        resolvedMin = 0;
+        const matches = cleanText.match(/(\d+)\s*k/);
+        if (matches) {
+            resolvedMax = Number(matches[1]) * 1000;
+        } else {
+            const numMatches = cleanText.match(/(\d+)/);
+            if (numMatches) resolvedMax = Number(numMatches[1]);
+        }
+    } else {
+        const parts = cleanText.split(/to|-|–|\//).map(p => p.trim());
+        if (parts.length >= 2) {
+            // Parse min
+            const minPart = parts[0];
+            if (minPart.includes('k')) {
+                const kVal = minPart.match(/(\d+(\.\d+)?)\s*k/);
+                if (kVal) resolvedMin = Number(kVal[1]) * 1000;
+            } else {
+                const numVal = minPart.match(/(\d+)/);
+                if (numVal) resolvedMin = Number(numVal[1]);
+            }
+            
+            // Parse max
+            const maxPart = parts[1];
+            if (maxPart.includes('k')) {
+                const kVal = maxPart.match(/(\d+(\.\d+)?)\s*k/);
+                if (kVal) resolvedMax = Number(kVal[1]) * 1000;
+            } else {
+                const numVal = maxPart.match(/(\d+)/);
+                if (numVal) resolvedMax = Number(numVal[1]);
+            }
+        }
+    }
+
+    let url = `/collections/products?min_price=${resolvedMin}&max_price=${resolvedMax}`;
     
     // Check categories
     if (lowerLabel.includes('kurtis') || lowerLabel.includes('kurti')) {
