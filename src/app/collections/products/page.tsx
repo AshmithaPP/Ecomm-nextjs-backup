@@ -18,6 +18,8 @@ const ProductsContent = () => {
     const [isSortOpen, setIsSortOpen] = useState(false);
     const { products, loading, error, fetchProducts, pagination, activeFilters } = useProductStore();
 
+    const isFirstRender = React.useRef(true);
+
     // 1. Sync URL -> Zustand on Mount & URL query changes
     useEffect(() => {
         const params: Record<string, string> = {};
@@ -38,6 +40,12 @@ const ProductsContent = () => {
 
     // 2. Sync Zustand -> URL & Fetch on changes
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            fetchProducts();
+            return;
+        }
+
         const latestFilters = useProductStore.getState().activeFilters;
         const currentParams = new URLSearchParams(Array.from(searchParams.entries()));
 
@@ -49,7 +57,7 @@ const ProductsContent = () => {
         // Remove keys that are NOT in latestFilters but are in the URL 
         const activeKeys = Object.keys(latestFilters);
         Array.from(searchParams.keys()).forEach(key => {
-            if (!activeKeys.includes(key) && key !== 'page' && key !== 'limit' && key !== 'sort' && key !== 'category' && key !== 'section_id' && key !== 'section_title' && key !== 'is_featured') {
+            if (!activeKeys.includes(key) && key !== 'page' && key !== 'limit' && key !== 'sort') {
                 currentParams.delete(key);
             }
         });
