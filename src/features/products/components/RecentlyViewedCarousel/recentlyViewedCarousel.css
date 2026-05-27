@@ -75,3 +75,33 @@
     padding-bottom: 10px;
 }
 
+/* Arrow Button Positioning & Responsiveness */
+.recently-viewed-section .related-carousel-wrapper {
+    padding: 0 60px;
+    box-sizing: border-box;
+}
+
+.recently-viewed-section .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+}
+
+.recently-viewed-section .arrow-left {
+    left: 10px;
+}
+
+.recently-viewed-section .arrow-right {
+    right: 10px;
+}
+
+@media (max-width: 991.98px) {
+    .recently-viewed-section .related-carousel-wrapper {
+        padding: 0 15px;
+    }
+    .recently-viewed-section .carousel-arrow {
+        display: none; /* Hide arrows on mobile */
+    }
+}
+

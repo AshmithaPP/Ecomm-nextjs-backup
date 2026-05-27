@@ -8,6 +8,13 @@ import './filters.css';
 const FilterSidebar = () => {
     const { availableFilters, activeFilters, absolutePriceRange, updateFilter, setPriceRange, clearAllFilters } = useProductStore();
 
+    // Compute safe min and max boundaries for the range slider
+    const minLimit = absolutePriceRange ? absolutePriceRange.min : (availableFilters.price_range ? Number(availableFilters.price_range.min) : 0);
+    const maxLimit = absolutePriceRange ? absolutePriceRange.max : (availableFilters.price_range ? Number(availableFilters.price_range.max) : 50000);
+    
+    const safeMin = minLimit === maxLimit ? 0 : minLimit;
+    const safeMax = maxLimit === 0 ? 50000 : maxLimit;
+
     // Mapping UI keys to API keys
     const apiKeyMap: Record<string, string> = {
         colors: 'color',
@@ -32,9 +39,14 @@ const FilterSidebar = () => {
 
     const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        const min = name === 'min' ? Number(value) : (activeFilters.min_price || 0);
-        const max = name === 'max' ? Number(value) : (activeFilters.max_price || 50000);
-        setPriceRange(min, max);
+        const min = name === 'min' 
+            ? (value === '' ? undefined : Number(value)) 
+            : (activeFilters.min_price !== undefined ? Number(activeFilters.min_price) : safeMin);
+        const max = name === 'max' 
+            ? (value === '' ? undefined : Number(value)) 
+            : (activeFilters.max_price !== undefined ? Number(activeFilters.max_price) : safeMax);
+        
+        setPriceRange(min ?? safeMin, max ?? safeMax);
     };
 
     const isFilterActive = (key: string, value: string) => {
@@ -54,12 +66,6 @@ const FilterSidebar = () => {
 
             {/* Price Range Section */}
             {availableFilters.price_range && (Number(availableFilters.price_range.max) > 0 || activeFilters.min_price || activeFilters.max_price) && (() => {
-                const minLimit = absolutePriceRange ? absolutePriceRange.min : Number(availableFilters.price_range.min);
-                const maxLimit = absolutePriceRange ? absolutePriceRange.max : Number(availableFilters.price_range.max);
-                
-                const safeMin = minLimit === maxLimit ? 0 : minLimit;
-                const safeMax = maxLimit;
-
                 const currentMin = activeFilters.min_price !== undefined ? Number(activeFilters.min_price) : safeMin;
                 const currentMax = activeFilters.max_price !== undefined ? Number(activeFilters.max_price) : safeMax;
                 

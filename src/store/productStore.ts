@@ -107,14 +107,38 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
                 const hasNoFilters = Object.keys(get().activeFilters).filter(k => k !== 'limit' && k !== 'page').length === 0;
                 
-                const newAbsoluteRange = data.filters?.price_range 
-                    ? { min: Number(data.filters.price_range.min), max: Number(data.filters.price_range.max) }
-                    : null;
+                // Dynamically resolve price range since the API might return min/max as 0
+                let apiMin = data.filters?.price_range?.min !== undefined ? Number(data.filters.price_range.min) : 0;
+                let apiMax = data.filters?.price_range?.max !== undefined ? Number(data.filters.price_range.max) : 0;
+
+                if (apiMax === 0 && mappedProducts.length > 0) {
+                    const prices = mappedProducts.map((p: any) => p.price).filter((p: number) => !isNaN(p));
+                    if (prices.length > 0) {
+                        apiMin = Math.min(...prices);
+                        apiMax = Math.max(...prices);
+                    }
+                }
+
+                if (apiMax === 0) {
+                    apiMin = 0;
+                    apiMax = 50000;
+                }
+
+                if (data.filters) {
+                    data.filters.price_range = { min: apiMin, max: apiMax };
+                }
+
+                const newAbsoluteRange = { min: apiMin, max: apiMax };
 
                 set((state) => {
                     const nextAbsoluteRange = state.absolutePriceRange && !hasNoFilters 
                         ? state.absolutePriceRange 
                         : newAbsoluteRange;
+
+                    // Ensure absolute max is never smaller than active max_price
+                    if (nextAbsoluteRange && state.activeFilters.max_price !== undefined) {
+                        nextAbsoluteRange.max = Math.max(nextAbsoluteRange.max, Number(state.activeFilters.max_price));
+                    }
 
                     return {
                         products: mappedProducts,

@@ -4,6 +4,8 @@
     width: fit-content;
     max-width: 100%;
     margin: 0 auto;
+    padding: 0 60px;
+    box-sizing: border-box;
 }
 
 .related-products-track {
@@ -32,8 +34,6 @@
 @media (max-width: 1200px) {
     .related-products-track {
         justify-content: flex-start;
-        padding-left: 50px;
-        padding-right: 50px;
     }
 }
 
@@ -50,14 +50,17 @@
 }
 
 .arrow-left {
-    left: -45px;
+    left: 10px;
 }
 
 .arrow-right {
-    right: -45px;
+    right: 10px;
 }
 
 @media (max-width: 991.98px) {
+    .related-carousel-wrapper {
+        padding: 0 15px;
+    }
     .related-product-card {
         flex: 0 0 250px;
     }
