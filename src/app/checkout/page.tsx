@@ -200,7 +200,7 @@ const checkoutSchema = z.object({
 const CheckoutPage = () => {
     const router = useRouter();
     const { addresses, fetchAddresses, addAddress, loading: addressLoading } = useAddressStore();
-    const { cart, fetchCart, loading: cartLoading, applyCoupon: applyCouponAPI, fetchActiveCoupons, mergeCart } = useCartStore();
+    const { cart, fetchCart, loading: cartLoading, applyCoupon: applyCouponAPI, fetchActiveCoupons } = useCartStore();
     const { placeOrder, loading: orderLoading } = useOrderStore();
     const { isAuthenticated, user, token } = useAuthStore();
 
@@ -258,8 +258,10 @@ const CheckoutPage = () => {
         const initCart = async () => {
             if (isAuthenticated) {
                 fetchAddresses();
-                // Ensure guest cart is merged into user cart
-                await mergeCart();
+                // NOTE: mergeCart() is intentionally NOT called here.
+                // It is already called inside authStore.login() right after login.
+                // Calling it again here would send the stale guestId to the backend
+                // which can overwrite the authenticated user's cart with an empty guest cart.
             }
             await fetchCart(selectedAddress?.state || stateValue);
             // Mark cart as initialized only after the first fetch is done
