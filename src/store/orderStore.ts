@@ -29,11 +29,14 @@ export const useOrderStore = create<OrderState>((set, get) => ({
     getHeaders: () => {
         const { token } = useAuthStore.getState();
         const { guestId } = useCartStore.getState();
-        const headers: any = {
-            'x-guest-id': guestId || null
-        };
+        const headers: any = {};
         if (token) {
+            // Authenticated: only use Bearer token, never send x-guest-id
+            // (prevents backend from looking up the stale empty guest cart)
             headers.Authorization = `Bearer ${token}`;
+        } else {
+            // Guest: identify by guest-id only
+            headers['x-guest-id'] = guestId || null;
         }
         return { headers };
     },

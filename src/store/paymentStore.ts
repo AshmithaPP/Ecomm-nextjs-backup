@@ -19,12 +19,15 @@ export const usePayment = create<PaymentState>((set, get) => ({
     getHeaders: () => {
         const { token } = useAuthStore.getState();
         const { guestId } = useCartStore.getState();
-        return {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                'x-guest-id': guestId
-            }
-        };
+        const headers: any = {};
+        if (token) {
+            // Authenticated: only use Bearer token, never send x-guest-id
+            headers.Authorization = `Bearer ${token}`;
+        } else {
+            // Guest: identify by guest-id only
+            headers['x-guest-id'] = guestId;
+        }
+        return { headers };
     },
 
     initiateRazorpayPayment: async (orderId: string) => {

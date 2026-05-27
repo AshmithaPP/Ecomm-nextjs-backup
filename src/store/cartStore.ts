@@ -97,12 +97,18 @@ export const useCartStore = create<CartState>()(
             },
 
             getHeaders: () => {
+                const token = useAuthStore.getState().token;
                 const headers: { [key: string]: string } = {
                     'Content-Type': 'application/json',
-                    'x-guest-id': get().guestId || ""
                 };
-                const token = useAuthStore.getState().token;
-                if (token) headers['Authorization'] = `Bearer ${token}`;
+                if (token) {
+                    // Authenticated: only use Bearer token, never send x-guest-id
+                    // (prevents backend from looking up the stale empty guest cart)
+                    headers['Authorization'] = `Bearer ${token}`;
+                } else {
+                    // Guest: identify by guest-id only
+                    headers['x-guest-id'] = get().guestId || "";
+                }
                 return headers;
             },
 
