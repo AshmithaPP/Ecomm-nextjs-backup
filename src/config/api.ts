@@ -63,6 +63,12 @@ export const resolveMediaUrl = (url: string | null | undefined): string => {
     return `${apiHost}${cleanPath}`;
   }
 
+  // If it's a customer favorites relative path, resolve it using the active backend API host instead of IMAGE_BASE
+  if (url.includes('/uploads/customer-favorites/')) {
+    const cleanPath = url.startsWith('/') ? url : `/${url}`;
+    return `${apiHost}${cleanPath}`;
+  }
+
   // If it's a relative path, ensure it starts with / and prepend IMAGE_BASE
   const cleanPath = url.startsWith('/') ? url : `/${url}`;
   return `${IMAGE_BASE}${cleanPath}`;

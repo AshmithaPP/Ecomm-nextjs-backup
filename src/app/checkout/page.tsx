@@ -249,34 +249,15 @@ const CheckoutPage = () => {
     const stateValue = watch('state');
     const upiSelection = watch('upiSelection');
 
-    // Sync saved address state
-    useEffect(() => {
-        setValue('hasSavedAddress', !!selectedAddress);
-    }, [selectedAddress, setValue]);
-
+    // Fetch initial cart on mount/auth change
     useEffect(() => {
         const initCart = async () => {
-            if (isAuthenticated) {
-                fetchAddresses();
-                // NOTE: mergeCart() is intentionally NOT called here.
-                // It is already called inside authStore.login() right after login.
-                // Calling it again here would send the stale guestId to the backend
-                // which can overwrite the authenticated user's cart with an empty guest cart.
-            }
-            await fetchCart(selectedAddress?.state || stateValue);
+            await fetchCart(stateValue);
             // Mark cart as initialized only after the first fetch is done
             setIsCartInitialized(true);
         };
         initCart();
     }, [isAuthenticated]);
-
-    // Automatically select default address if available
-    useEffect(() => {
-        if (addresses.length > 0 && !selectedAddress) {
-            const defaultAddr = addresses.find((addr: any) => addr.is_default) || addresses[0];
-            setSelectedAddress(defaultAddr);
-        }
-    }, [addresses, selectedAddress]);
 
     useEffect(() => {
         fetchActiveCoupons().then(setAvailableCoupons);
@@ -299,11 +280,10 @@ const CheckoutPage = () => {
 
     // Fetch Cart with State when state changes
     useEffect(() => {
-        const state = selectedAddress ? selectedAddress.state : stateValue;
-        if (state) {
-            fetchCart(state);
+        if (stateValue) {
+            fetchCart(stateValue);
         }
-    }, [stateValue, selectedAddress, fetchCart]);
+    }, [stateValue, fetchCart]);
 
     const applyCoupon = async () => {
         if (!couponCode) return;
@@ -321,9 +301,6 @@ const CheckoutPage = () => {
     };
 
     const getDeliveryAddress = () => {
-        if (selectedAddress && !showAddressList) {
-            return selectedAddress;
-        }
         const values = getValues();
         return {
             full_name: values.fullName,
@@ -357,30 +334,17 @@ const CheckoutPage = () => {
             order_notes: data.orderNotes ? sanitizeInput(data.orderNotes) : ""
         };
 
-        if (selectedAddress && !showAddressList) {
-            payload.address_id = selectedAddress.address_id;
-        } else {
-            payload.address = {
-                full_name: sanitizeInput(data.fullName || ""),
-                phone: sanitizeInput(data.mobileNumber || ""),
-                email: sanitizeInput(data.email || ""),
-                address_line1: sanitizeInput(data.address || ""),
-                address_line2: data.address2 ? sanitizeInput(data.address2) : "",
-                city: sanitizeInput(data.city || ""),
-                state: sanitizeInput(data.state || ""),
-                postal_code: sanitizeInput(data.pincode || ""),
-                country: 'India'
-            };
-
-            // Option to save address for authenticated users
-            if (data.saveAddress && isAuthenticated) {
-                const result = await addAddress({ ...payload.address, address_type: data.addressType });
-                if (result.success) {
-                    payload.address_id = result.data.address_id;
-                    delete payload.address;
-                }
-            }
-        }
+        payload.address = {
+            full_name: sanitizeInput(data.fullName || ""),
+            phone: sanitizeInput(data.mobileNumber || ""),
+            email: sanitizeInput(data.email || ""),
+            address_line1: sanitizeInput(data.address || ""),
+            address_line2: data.address2 ? sanitizeInput(data.address2) : "",
+            city: sanitizeInput(data.city || ""),
+            state: sanitizeInput(data.state || ""),
+            postal_code: sanitizeInput(data.pincode || ""),
+            country: 'India'
+        };
 
         const result = await placeOrder(payload);
 
@@ -441,11 +405,6 @@ const CheckoutPage = () => {
                         <section className="delivery-address-section mb-4">
                             <div className="d-flex justify-content-between align-items-center mb-4">
                                 <h2 className="checkout-section-title">Delivery Address</h2>
-                                {isAuthenticated && addresses.length > 0 && !showAddressList && (
-                                    <button className="btn-select-address" onClick={() => setShowAddressList(true)}>
-                                        SELECT SAVED ADDRESS
-                                    </button>
-                                )}
                             </div>
 
                             {!isAuthenticated && (
@@ -489,208 +448,138 @@ const CheckoutPage = () => {
                                 </div>
                             )}
 
-                            {showAddressList ? (
-                                <div className="saved-addresses-list">
-                                    {addresses.map((addr: any) => (
-                                        <div
-                                            key={addr.address_id}
-                                            className={`address-card ${selectedAddress?.address_id === addr.address_id ? 'selected' : ''}`}
-                                            onClick={() => handleSelectSavedAddress(addr)}
-                                        >
-                                            <div className="d-flex justify-content-between">
-                                                <h6>{addr.full_name} {addr.is_default ? '(Default)' : ''}</h6>
-                                                {selectedAddress?.address_id === addr.address_id && (
-                                                    <span className="badge bg-success" style={{ fontSize: '10px' }}>SELECTED</span>
-                                                )}
-                                            </div>
-                                            <p>{addr.address_line1}, {addr.city}, {addr.state} - {addr.postal_code}</p>
-                                            <p>Phone: {addr.phone}</p>
-                                        </div>
-                                    ))}
-                                    <button className="btn-add-new mt-3 w-100" onClick={() => {
-                                        setShowAddressList(false);
-                                        setSelectedAddress(null);
-                                    }}>
-                                        + ADD NEW ADDRESS
-                                    </button>
-                                </div>
-                            ) : selectedAddress ? (
-                                <div className="selected-address-box mb-4">
-                                    <div className="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 className="fw-bold mb-2">{selectedAddress.full_name}</h6>
-                                            <p className="mb-1">{selectedAddress.address_line1}</p>
-                                            {selectedAddress.address_line2 && <p className="mb-1">{selectedAddress.address_line2}</p>}
-                                            <p className="mb-1">{selectedAddress.city}, {selectedAddress.state} - {selectedAddress.postal_code}</p>
-                                            <p className="mb-0">Phone: {selectedAddress.phone}</p>
-                                        </div>
-                                        <button className="btn-change-address" onClick={() => setShowAddressList(true)}>
-                                            CHANGE
-                                        </button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <form className="address-form" onSubmit={(e) => e.preventDefault()}>
-                                    <div className="row mb-4">
-                                        <div className="col-md-6 mb-3 mb-md-0">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Full Name"
-                                                    className={`custom-input ${errors.fullName ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.fullName ? "true" : "false"}
-                                                    {...register('fullName')}
-                                                />
-                                                {errors.fullName && <span className="error-message">{errors.fullName.message}</span>}
-                                                {showSuccessTick('fullName') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Mobile Number"
-                                                    className={`custom-input ${errors.mobileNumber ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.mobileNumber ? "true" : "false"}
-                                                    onInput={(e) => {
-                                                        e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').substring(0, 10);
-                                                    }}
-                                                    {...register('mobileNumber')}
-                                                />
-                                                {errors.mobileNumber && <span className="error-message">{errors.mobileNumber.message}</span>}
-                                                {showSuccessTick('mobileNumber') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mb-4">
-                                        <div className="col-12">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="email"
-                                                    placeholder="Email Address (For tracking updates)"
-                                                    className={`custom-input full-width ${errors.email ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.email ? "true" : "false"}
-                                                    {...register('email')}
-                                                />
-                                                {errors.email && <span className="error-message">{errors.email.message}</span>}
-                                                {showSuccessTick('email') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mb-4">
-                                        <div className="col-12">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Flat, House no., Building, Apartment"
-                                                    className={`custom-input full-width ${errors.address ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.address ? "true" : "false"}
-                                                    {...register('address')}
-                                                />
-                                                {errors.address && <span className="error-message">{errors.address.message}</span>}
-                                                {showSuccessTick('address') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mb-4">
-                                        <div className="col-12">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Area, Street, Sector, Village (Optional)"
-                                                    className={`custom-input full-width ${errors.address2 ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.address2 ? "true" : "false"}
-                                                    {...register('address2')}
-                                                />
-                                                {errors.address2 && <span className="error-message">{errors.address2.message}</span>}
-                                                {showSuccessTick('address2') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mb-4">
-                                        <div className="col-md-6 mb-3 mb-md-0">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="City"
-                                                    className={`custom-input ${errors.city ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.city ? "true" : "false"}
-                                                    {...register('city')}
-                                                />
-                                                {errors.city && <span className="error-message">{errors.city.message}</span>}
-                                                {showSuccessTick('city') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 mb-3 mb-md-0">
-                                            <div className="form-input-group select-wrapper">
-                                                <select
-                                                    className={`custom-input select-input ${errors.state ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.state ? "true" : "false"}
-                                                    {...register('state')}
-                                                >
-                                                    <option value="">State</option>
-                                                    <option value="Tamil Nadu">Tamil Nadu</option>
-                                                    <option value="Karnataka">Karnataka</option>
-                                                    <option value="Andhra Pradesh">Andhra Pradesh</option>
-                                                    <option value="Telangana">Telangana</option>
-                                                    <option value="Kerala">Kerala</option>
-                                                    <option value="Maharashtra">Maharashtra</option>
-                                                </select>
-                                                {errors.state && <span className="error-message">{errors.state.message}</span>}
-                                                {showSuccessTick('state') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3">
-                                            <div className="form-input-group">
-                                                <input
-                                                    type="text"
-                                                    placeholder="Pincode"
-                                                    className={`custom-input ${errors.pincode ? 'is-invalid' : ''}`}
-                                                    aria-invalid={errors.pincode ? "true" : "false"}
-                                                    onInput={(e) => {
-                                                        e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').substring(0, 6);
-                                                    }}
-                                                    {...register('pincode')}
-                                                />
-                                                {errors.pincode && <span className="error-message">{errors.pincode.message}</span>}
-                                                {showSuccessTick('pincode') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mb-4">
-                                        <div className="col-md-6">
-                                            <div className="form-input-group select-wrapper">
-                                                <select
-                                                    className="custom-input select-input"
-                                                    {...register('addressType')}
-                                                >
-                                                    <option value="home">Home (7 AM - 9 PM delivery)</option>
-                                                    <option value="office">Office (10 AM - 6 PM delivery)</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {isAuthenticated && (
-                                        <div className="d-flex align-items-center mt-3">
+                            <form className="address-form" onSubmit={(e) => e.preventDefault()}>
+                                <div className="row mb-4">
+                                    <div className="col-md-6 mb-3 mb-md-0">
+                                        <div className="form-input-group">
                                             <input
-                                                type="checkbox"
-                                                id="saveAddress"
-                                                className="custom-checkbox"
-                                                {...register('saveAddress')}
+                                                type="text"
+                                                placeholder="Full Name"
+                                                className={`custom-input ${errors.fullName ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.fullName ? "true" : "false"}
+                                                {...register('fullName')}
                                             />
-                                            <label htmlFor="saveAddress" className="checkbox-label ms-2">
-                                                Save this address for faster checkouts
-                                            </label>
+                                            {errors.fullName && <span className="error-message">{errors.fullName.message}</span>}
+                                            {showSuccessTick('fullName') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
                                         </div>
-                                    )}
-                                </form>
-                            )}
+                                    </div>
+                                    <div className="col-md-6">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="text"
+                                                placeholder="Mobile Number"
+                                                className={`custom-input ${errors.mobileNumber ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.mobileNumber ? "true" : "false"}
+                                                onInput={(e) => {
+                                                    e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').substring(0, 10);
+                                                }}
+                                                {...register('mobileNumber')}
+                                            />
+                                            {errors.mobileNumber && <span className="error-message">{errors.mobileNumber.message}</span>}
+                                            {showSuccessTick('mobileNumber') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-4">
+                                    <div className="col-12">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="email"
+                                                placeholder="Email Address (For tracking updates)"
+                                                className={`custom-input full-width ${errors.email ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.email ? "true" : "false"}
+                                                {...register('email')}
+                                            />
+                                            {errors.email && <span className="error-message">{errors.email.message}</span>}
+                                            {showSuccessTick('email') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-4">
+                                    <div className="col-12">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="text"
+                                                placeholder="Flat, House no., Building, Apartment"
+                                                className={`custom-input full-width ${errors.address ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.address ? "true" : "false"}
+                                                {...register('address')}
+                                            />
+                                            {errors.address && <span className="error-message">{errors.address.message}</span>}
+                                            {showSuccessTick('address') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-4">
+                                    <div className="col-12">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="text"
+                                                placeholder="Area, Street, Sector, Village (Optional)"
+                                                className={`custom-input full-width ${errors.address2 ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.address2 ? "true" : "false"}
+                                                {...register('address2')}
+                                            />
+                                            {errors.address2 && <span className="error-message">{errors.address2.message}</span>}
+                                            {showSuccessTick('address2') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row mb-4">
+                                    <div className="col-md-6 mb-3 mb-md-0">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="text"
+                                                placeholder="City"
+                                                className={`custom-input ${errors.city ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.city ? "true" : "false"}
+                                                {...register('city')}
+                                            />
+                                            {errors.city && <span className="error-message">{errors.city.message}</span>}
+                                            {showSuccessTick('city') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                    <div className="col-md-3 mb-3 mb-md-0">
+                                        <div className="form-input-group select-wrapper">
+                                            <select
+                                                className={`custom-input select-input ${errors.state ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.state ? "true" : "false"}
+                                                {...register('state')}
+                                            >
+                                                <option value="">State</option>
+                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                                <option value="Karnataka">Karnataka</option>
+                                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                                <option value="Telangana">Telangana</option>
+                                                <option value="Kerala">Kerala</option>
+                                                <option value="Maharashtra">Maharashtra</option>
+                                            </select>
+                                            {errors.state && <span className="error-message">{errors.state.message}</span>}
+                                            {showSuccessTick('state') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                    <div className="col-md-3">
+                                        <div className="form-input-group">
+                                            <input
+                                                type="text"
+                                                placeholder="Pincode"
+                                                className={`custom-input ${errors.pincode ? 'is-invalid' : ''}`}
+                                                aria-invalid={errors.pincode ? "true" : "false"}
+                                                onInput={(e) => {
+                                                    e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').substring(0, 6);
+                                                }}
+                                                {...register('pincode')}
+                                            />
+                                            {errors.pincode && <span className="error-message">{errors.pincode.message}</span>}
+                                            {showSuccessTick('pincode') && <i className="bi bi-check-circle-fill input-success-tick"></i>}
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
                         </section>
 
                         <div className="eco-shipping-box mb-4">
@@ -1029,11 +918,11 @@ const CheckoutPage = () => {
                                 </div>
 
                                 {/* Additional UX */}
-                                {(stateValue || selectedAddress?.state) && (
+                                {stateValue && (
                                     <div className="delivery-info-mini mt-3 p-2 rounded bg-light border">
                                         <p className="mb-0 small text-muted">
                                             <i className="bi bi-truck me-2"></i>
-                                            Delivery to <strong>{selectedAddress ? selectedAddress.state : stateValue}</strong>
+                                            Delivery to <strong>{stateValue}</strong>
                                         </p>
                                         <p className="mb-0 small text-muted">
                                             Estimated Delivery: <strong>{cartSummary.estimated_days || '3–5 Days'}</strong>

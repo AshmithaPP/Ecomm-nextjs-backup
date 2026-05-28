@@ -11,6 +11,42 @@ import Image from 'next/image';
 import transportIcon from 'assets/icons/ui/transporticon.png';
 import sareeImageFallback from 'assets/images/silk/collection1.png';
 
+const formatIndianTime = (dateInput: string | Date | null | undefined) => {
+  if (!dateInput) return '-';
+  try {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return '-';
+    return date.toLocaleString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      hour12: true,
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  } catch (e) {
+    return '-';
+  }
+};
+
+const formatIndianDate = (dateInput: string | Date | null | undefined) => {
+  if (!dateInput) return '-';
+  try {
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return '-';
+    return date.toLocaleDateString('en-IN', {
+      timeZone: 'Asia/Kolkata',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  } catch (e) {
+    return '-';
+  }
+};
+
 const OrderConfirmationPage = () => {
   const params = useParams();
   const orderId = params?.orderId as string;
@@ -100,7 +136,7 @@ const OrderConfirmationPage = () => {
                   </div>
                   <div className="order-conf-summary-item">
                     <span className="order-conf-item-label">ORDER DATE</span>
-                    <div className="order-conf-item-value">{new Date(currentOrder.created_at).toLocaleDateString()}</div>
+                    <div className="order-conf-item-value">{formatIndianDate(currentOrder.created_at)}</div>
                   </div>
                 </div>
 
@@ -172,12 +208,27 @@ const OrderConfirmationPage = () => {
                 </div>
 
                 <div className="order-conf-delivery-body">
-                  <div className="order-conf-customer-name">{address?.full_name}</div>
-                  <div className="order-conf-customer-address">
-                    {address?.address_line1}, {address?.address_line2 && `${address.address_line2}, `}
-                    {address?.city}, {address?.state} - {address?.postal_code}
+                  <div className="order-conf-customer-name" style={{ fontWeight: 700, color: '#1e293b', marginBottom: '8px' }}>{address?.full_name}</div>
+                  <div className="order-conf-customer-address" style={{ fontSize: '13.5px', color: '#475569', marginBottom: '6px', lineHeight: '1.5' }}>
+                    <strong>Address: </strong>
+                    {(() => {
+                      const parts = [
+                        address?.address_line1,
+                        address?.address_line2,
+                        address?.city,
+                        address?.state
+                      ].filter(Boolean);
+                      if (parts.length === 0) return '-';
+                      let addrStr = parts.join(', ');
+                      if (address?.postal_code) {
+                        addrStr += ` - ${address.postal_code}`;
+                      }
+                      return addrStr;
+                    })()}
                   </div>
-                  <div className="order-conf-customer-phone">Ph: {address?.phone}</div>
+                  <div className="order-conf-customer-phone" style={{ fontSize: '13.5px', color: '#475569' }}>
+                    <strong>Phone: </strong>{address?.phone || '-'}
+                  </div>
                 </div>
 
                 <div className="order-conf-arrival-section">
@@ -226,7 +277,7 @@ const OrderConfirmationPage = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: '13px', color: '#64748b' }}>Shipped At</span>
                         <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>
-                          {new Date(currentOrder.shipped_at).toLocaleString()}
+                          {formatIndianTime(currentOrder.shipped_at)}
                         </span>
                       </div>
                     )}
@@ -235,7 +286,7 @@ const OrderConfirmationPage = () => {
                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                         <span style={{ fontSize: '13px', color: '#64748b' }}>Est. Delivery</span>
                         <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569' }}>
-                          {new Date(currentOrder.estimated_delivery_date).toLocaleDateString()}
+                          {formatIndianDate(currentOrder.estimated_delivery_date)}
                         </span>
                       </div>
                     )}
@@ -291,7 +342,7 @@ const OrderConfirmationPage = () => {
                           <div>
                             <div style={{ fontSize: '13px', fontWeight: 'bold', textTransform: 'capitalize' }}>{step.status}</div>
                             <div style={{ fontSize: '11px', color: '#6c757d' }}>{step.message}</div>
-                            <div style={{ fontSize: '10px', color: '#adb5bd' }}>{new Date(step.created_at).toLocaleString()}</div>
+                            <div style={{ fontSize: '10px', color: '#adb5bd' }}>{formatIndianTime(step.created_at)}</div>
                           </div>
                         </div>
                       ))}
