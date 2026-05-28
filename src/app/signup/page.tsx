@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import Image from 'next/image';
 import Logo from '@/assets/images/logo/Logo-SareeEcom.png';
 import '../auth.css';
+import { toast } from 'react-toastify';
 
 const signupSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -37,10 +38,13 @@ export default function SignupPage() {
 
     const onSubmit = async (data: SignupFormData) => {
         setIsLoading(true);
-        const success = await signup(data);
+        const result = await signup(data);
         setIsLoading(false);
-        if (success) {
+        if (result.success) {
+            toast.success('Successfully created your account!');
             router.push('/');
+        } else {
+            toast.error(result.message || 'Registration failed. Please try again.');
         }
     };
 

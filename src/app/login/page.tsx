@@ -11,6 +11,7 @@ import { useAuthStore } from '@/store/authStore';
 import Image from 'next/image';
 import Logo from '@/assets/images/logo/Logo-SareeEcom.png';
 import '../auth.css';
+import { toast } from 'react-toastify';
 
 const loginSchema = z.object({
     email: z.string().email('Invalid email address'),
@@ -43,10 +44,13 @@ function LoginForm() {
 
     const onSubmit = async (data: LoginFormData) => {
         setIsLoading(true);
-        const success = await login(data);
+        const result = await login(data);
         setIsLoading(false);
-        if (success) {
+        if (result.success) {
+            toast.success('Successfully signed in!');
             router.push(redirectTo);
+        } else {
+            toast.error(result.message || 'Invalid email or password. Please try again.');
         }
     };
 
