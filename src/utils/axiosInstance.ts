@@ -27,8 +27,17 @@ axiosInstance.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
-        // If error is 401 and not already retried
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // Skip token refresh logic for authentication endpoints (login, signup, forgot/reset password)
+        const isAuthEndpoint = originalRequest.url && (
+            originalRequest.url.includes('/auth/login') ||
+            originalRequest.url.includes('/auth/signup') ||
+            originalRequest.url.includes('/auth/forgot-password') ||
+            originalRequest.url.includes('/auth/reset-password') ||
+            originalRequest.url.includes('/customer/auth/')
+        );
+
+        // If error is 401, not already retried, and not an auth endpoint
+        if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
             originalRequest._retry = true;
 
             try {
