@@ -19,6 +19,16 @@ const authService = {
     getMe: async (): Promise<{ success: boolean; data: User }> => {
         const response = await axiosInstance.get('/auth/me');
         return response.data;
+    },
+
+    forgotPassword: async (email: string): Promise<{ success: boolean; message: string }> => {
+        const response = await axiosInstance.post('/customer/auth/forgot-password', { email });
+        return response.data;
+    },
+
+    resetPassword: async (token: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+        const response = await axiosInstance.post('/customer/auth/reset-password', { token, newPassword });
+        return response.data;
     }
 };
 
