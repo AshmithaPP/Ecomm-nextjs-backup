@@ -52,11 +52,13 @@ const HeroSection = ({ dynamicData }: HeroSectionProps) => {
                         </Link>
                     </div>
                     <div className="col-md-6 hero-right d-flex justify-content-end align-items-end d-none d-md-flex">
-                        {typeof logoSrc === 'string' ? (
-                            <img src={logoSrc} alt="Hero Banner" className="hero-img img-fluid" style={{ maxWidth: '456px', height: 'auto' }} />
-                        ) : (
-                            <Image src={logoSrc} alt="Saree Model" className="hero-img img-fluid" width={456} height={570} />
-                        )}
+                        <div className="hero-image-wrapper">
+                            {typeof logoSrc === 'string' ? (
+                                <img src={logoSrc} alt="Hero Banner" className="hero-img img-fluid zoom-in-image" style={{ maxWidth: '456px', height: 'auto' }} />
+                            ) : (
+                                <Image src={logoSrc} alt="Saree Model" className="hero-img img-fluid zoom-in-image" width={456} height={570} priority />
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

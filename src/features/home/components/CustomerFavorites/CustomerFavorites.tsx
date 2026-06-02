@@ -18,6 +18,7 @@ const CustomerFavorites = () => {
     
     const [playingStates, setPlayingStates] = useState<{ [key: string]: boolean }>({});
     const [isAddingToCart, setIsAddingToCart] = useState<{ [key: string]: boolean }>({});
+    const [failedVideos, setFailedVideos] = useState<{ [key: string]: boolean }>({});
     
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(true);
@@ -210,6 +211,7 @@ const CustomerFavorites = () => {
                     >
                         {favorites.map((fav: any) => {
                             const isPlaying = playingStates[fav.video_id] || false;
+                            const hasVideoFailed = failedVideos[fav.video_id] || false;
                             
                             return (
                                 <div 
@@ -217,32 +219,35 @@ const CustomerFavorites = () => {
                                     className="favorite-video-card"
                                     onClick={() => handleVideoClick(fav.video_id)}
                                 >
-                                    {/* Video Element */}
-                                    <video
-                                        ref={el => { videoRefs.current[fav.video_id] = el; }}
-                                        data-video-id={fav.video_id}
-                                        src={resolveMediaUrl(fav.video_url)}
-                                        poster={resolveMediaUrl(fav.thumbnail_url)}
-                                        className="favorite-video-element"
-                                        autoPlay
-                                        loop
-                                        muted
-                                        playsInline
-                                        preload="auto"
-                                        controls
-                                        onClick={(event) => event.stopPropagation()}
-                                        onPlay={() => handleVideoPlay(fav.video_id)}
-                                        onPause={() => handleVideoPause(fav.video_id)}
-                                        onError={(event) => {
-                                            const videoEl = event.currentTarget as HTMLVideoElement;
-                                            console.error('CustomerFavorites video load failed', {
-                                                videoId: fav.video_id,
-                                                src: videoEl.currentSrc,
-                                                code: videoEl.error?.code,
-                                                message: videoEl.error?.message
-                                            });
-                                        }}
-                                    />
+                                    {/* Conditionally render Video or fallback Poster Image */}
+                                    {hasVideoFailed ? (
+                                        <img
+                                            src={resolveMediaUrl(fav.thumbnail_url)}
+                                            alt={fav.title || "Saree Model"}
+                                            className="favorite-video-element"
+                                            style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                                        />
+                                    ) : (
+                                        <video
+                                            ref={el => { videoRefs.current[fav.video_id] = el; }}
+                                            data-video-id={fav.video_id}
+                                            src={resolveMediaUrl(fav.video_url)}
+                                            poster={resolveMediaUrl(fav.thumbnail_url)}
+                                            className="favorite-video-element"
+                                            autoPlay
+                                            loop
+                                            muted
+                                            playsInline
+                                            preload="auto"
+                                            controls
+                                            onClick={(event) => event.stopPropagation()}
+                                            onPlay={() => handleVideoPlay(fav.video_id)}
+                                            onPause={() => handleVideoPause(fav.video_id)}
+                                            onError={() => {
+                                                setFailedVideos(prev => ({ ...prev, [fav.video_id]: true }));
+                                            }}
+                                        />
+                                    )}
 
                                     {/* Semi-transparent dark background layer */}
                                     <div className="video-card-gradient" />

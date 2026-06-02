@@ -42,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${jost.variable} ${manrope.variable} ${notoSerif.variable} ${readexPro.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning className={`${jost.variable} ${manrope.variable} ${notoSerif.variable} ${readexPro.variable}`}>
       <body className={jost.className}>
         <Providers>
             <Layout>

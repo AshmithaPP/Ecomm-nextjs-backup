@@ -14,7 +14,7 @@ interface OrderState {
     placeOrder: (orderPayload: any) => Promise<any>;
     fetchOrderDetails: (orderId: string) => Promise<void>;
     fetchOrders: (page?: number, limit?: number) => Promise<void>;
-    cancelOrder: (orderId: string) => Promise<any>;
+    cancelOrder: (orderId: string, reason: string) => Promise<any>;
     trackOrder: (orderId: string) => Promise<any>;
     trackGuestOrder: (orderId: string, phone: string) => Promise<any>;
 }
@@ -96,15 +96,20 @@ export const useOrderStore = create<OrderState>((set, get) => ({
         }
     },
 
-    cancelOrder: async (orderId) => {
+    cancelOrder: async (orderId, reason) => {
         set({ loading: true, error: null });
         try {
-            const response = await axios.post(`${API_BASE}/orders/${orderId}/cancel`, {}, get().getHeaders());
-            // Update local state
-            const updatedOrders = get().orders.map(o => 
-                o.order_id === orderId ? { ...o, status: 'cancelled' } : o
-            );
-            set({ orders: updatedOrders, loading: false });
+            const response = await axios.post(`${API_BASE}/orders/${orderId}/cancel`, { reason }, get().getHeaders());
+            
+            // Re-fetch a completely fresh state from the backend to ensure data integrity
+            await get().fetchOrderDetails(orderId);
+            
+            // Refresh order list if populated
+            if (get().orders.length > 0) {
+                await get().fetchOrders();
+            }
+
+            set({ loading: false });
             return { success: true, message: response.data.message };
         } catch (error: any) {
             const msg = error.response?.data?.message || 'Cancellation failed';

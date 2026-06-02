@@ -59,11 +59,13 @@ const ContactHero = ({
                         )}
                     </div>
                     <div className="col-md-6 contact_hero_right d-flex justify-content-end align-items-end d-none d-md-flex">
-                        <img
-                            src={resolvedImage}
-                            alt="Saree Model"
-                            className="contact_hero_img"
-                        />
+                        <div className="contact_hero_image_wrapper">
+                            <img
+                                src={resolvedImage}
+                                alt="Saree Model"
+                                className="contact_hero_img zoom-in-image"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

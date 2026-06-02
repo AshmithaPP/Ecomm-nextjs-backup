@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useProductStore } from '@/store/productStore';
 import Breadcrumbs from 'components/ui/Breadcrumbs/Breadcrumbs';
 import FilterSidebar from 'features/products/components/Filters/FilterSidebar';
-import ProductCard from 'features/products/components/ProductCard/ProductCard';
+import ProductCard from 'components/ui/ProductCard';
 import Pagination from 'features/products/components/Pagination/Pagination';
 
 import './productsPage.css';

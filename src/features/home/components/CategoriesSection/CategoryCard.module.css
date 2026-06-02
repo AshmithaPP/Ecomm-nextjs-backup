@@ -1,20 +1,61 @@
+/* CategoryCard.module.css */
 .cardContainer {
     position: relative;
     width: 400px;
     height: 259.26px;
-    border-radius: 16px;
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
     cursor: pointer;
+    background: linear-gradient(135deg, #1f1f3a 0%, #3d2226 50%, #563339 100%); /* High-end dark rose-gold fallback gradient */
     background-size: cover;
     background-position: center 15%;
     background-repeat: no-repeat;
 }
 
+/* Highlighted border effect using pseudo-element */
+.cardContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    padding: 2.5px;
+   
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+/* Inner glow effect on hover */
+.cardContainer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 20px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
 .cardContainer:hover {
-    transform: scale(1.02);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03) translateY(-4px);
+}
+
+.cardContainer:hover::before {
+    opacity: 1;
+    background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,1) 30%, rgba(255,255,255,0.4) 70%, rgba(255,255,255,0.1) 100%);
+}
+
+.cardContainer:hover::after {
+    opacity: 1;
 }
 
 .overlay {
@@ -23,10 +64,33 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5));
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.55) 100%);
+    backdrop-filter: brightness(1.05);
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    transition: backdrop-filter 0.3s ease;
+    z-index: 2; /* Sits beautifully above the background zoom image */
+}
+
+.cardContainer:hover .overlay {
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+.bgImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 15%;
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 1; /* Sits underneath the text overlay */
+}
+
+.cardContainer:hover .bgImage {
+    transform: scale(1.08); /* High-end, smooth zoom to highlight category images! */
 }
 
 .contentBox {
@@ -38,101 +102,144 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    /* LEFT ALIGNED EXACTLY */
 }
 
 .title {
     width: 100%;
-    font-family: 'Jost', sans-serif;
-    font-weight: 500;
-    font-size: 26.77px;
-    line-height: 120%;
-    /* added for wrap if needed, absolute spec was 100% */
+    font-family: 'Jost', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.2;
     color: #FFFFFF;
-    margin: 0;
+    margin: 0 0 4px 0;
     padding: 0;
     text-align: left;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    letter-spacing: -0.3px;
 }
 
 .countBadge {
-    margin-top: 8px;
-    /* matching visual layout */
+    margin-top: 6px;
     width: fit-content;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    /* REMOVED BACKGROUND */
-    border-radius: 0;
-    /* pill shape */
-    padding: 0;
-    margin-bottom: 0px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(4px);
+    border-radius: 40px;
+    padding: 4px 12px;
+    margin-bottom: 16px;
 }
 
 .countText {
-    width: 115.67px;
-    height: 26.77px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 400;
-    /* Style Regular */
-    font-size: 19.12px;
-    line-height: 100%;
+    font-family: 'Jost', 'Poppins', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.3;
     color: #FFFFFF;
     margin: 0;
-    display: flex;
-    align-items: center;
-    text-align: left;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .viewBtn {
     margin-top: auto;
     width: 205.53px;
-    height: 64.05px;
-    background-color: transparent;
-    /* TRANSPARENT BACKGROUND */
-    border: 1px solid #FFFFFF;
-    /* OUTLINE BUTTON */
-    border-radius: 8px;
-    /* Exact rounded rectangle matching picture */
+    height: 48px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(8px);
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.viewBtn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s ease;
 }
 
 .viewBtn:hover {
-    background-color: #FFFFFF;
-    /* inversion effect commonly used */
-    color: #333333;
+    background: #FFFFFF;
+    border-color: #FFFFFF;
+    transform: scale(1.02);
+}
+
+.viewBtn:hover::before {
+    left: 100%;
 }
 
 .viewBtn:hover .btnText {
-    color: #333333 !important;
+    color: #1a1a2e;
 }
 
 .btnText {
-    width: 100%;
-    height: 26.77px;
-    font-family: 'Jost', sans-serif;
-    font-weight: 500;
-    font-size: 19.12px;
-    line-height: 100%;
+    font-family: 'Jost', 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.8px;
+    line-height: 1;
     color: #FFFFFF;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
+    transition: color 0.25s ease;
 }
 
-/* Responsiveness adjustments to prevent hard width/height bugs on smaller containers */
+.btnText::after {
+    content: '→';
+    font-size: 18px;
+    transition: transform 0.25s ease;
+    display: inline-block;
+}
+
+.viewBtn:hover .btnText::after {
+    transform: translateX(4px);
+}
+
+/* Optional: Add a subtle shine animation on initial load */
+@keyframes shine {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.cardContainer {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
 @media (max-width: 1400px) {
     .cardContainer {
         width: 100%;
-        /* fluid inside grid */
-    }
-
-    .contentBox {
-        /* adjust for scale or preserve absolute values */
+        max-width: 400px;
+        margin: 0 auto;
     }
 }
 
@@ -153,8 +260,11 @@
     }
 
     .title {
-        width: 100%;
-        white-space: normal;
         font-size: 22px;
+    }
+
+    .viewBtn {
+        width: 180px;
+        height: 44px;
     }
 }

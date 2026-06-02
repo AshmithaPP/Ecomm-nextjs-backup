@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;600&display=swap');
 
 .hero-section {
-    background-image: url('../../../../assets/images/herobg.png');
+    background-image: url('/herobg.png');
     background-size: cover;
     background-position: center;
     /* background-repeat: no-repeat; */
@@ -70,6 +70,34 @@
     padding: 15px 29px;
     transition: background-color 0.3s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 20%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: btnShimmer 4.5s infinite linear;
+}
+
+@keyframes btnShimmer {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
 }
 
 .hero-btn:hover {
@@ -81,6 +109,51 @@
     display: flex;
     align-items: flex-end;
     height: 100%;
+}
+
+/* NEW: Image wrapper for zoom effect */
+.hero-image-wrapper {
+    overflow: visible;
+    width: 456px;
+    height: 570px;
+    max-width: 100%;
+    border-radius: 8px;
+    position: relative;
+}
+
+/* NEW: Zoom animation class */
+.zoom-in-image {
+    animation: slowZoomIn 8s ease-out infinite alternate;
+    transform-origin: center center;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    animation: slowZoomIn 8s ease-out infinite alternate, fadeIn 1s ease-out forwards;
+}
+
+/* NEW: Keyframes for slow zoom */
+@keyframes slowZoomIn {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.12);
+    }
+}
+
+/* NEW: Fade in animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* NEW: Optional pause on hover */
+.hero-image-wrapper:hover .zoom-in-image {
+    animation-play-state: paused;
 }
 
 .hero-img {
@@ -134,5 +207,10 @@
     .hero-img {
         max-width: 100%;
         height: auto;
+    }
+    
+    /* NEW: Adjust animation for mobile */
+    .zoom-in-image {
+        animation: slowZoomIn 6s ease-out infinite alternate, fadeIn 1s ease-out forwards;
     }
 }

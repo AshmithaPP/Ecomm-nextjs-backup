@@ -17,9 +17,16 @@ const CategoryCard = ({ title, count, imageUrl, buttonText = "View Collections",
     return (
         <div
             className={styles.cardContainer}
-            style={{ backgroundImage: `url(${bgUrl})` }}
             onClick={() => onClick && onClick(title)}
         >
+            <img 
+                src={bgUrl} 
+                alt={title} 
+                className={styles.bgImage} 
+                onError={(e) => {
+                    e.currentTarget.style.display = 'none'; // Gracefully hide broken browser image icons
+                }}
+            />
             <div className={styles.overlay}>
                 <div className={styles.contentBox}>
                     <h3 className={styles.title}>{title}</h3>

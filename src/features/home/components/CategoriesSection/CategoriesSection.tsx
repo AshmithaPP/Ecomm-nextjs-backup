@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CategoryCard from './CategoryCard';
 import styles from './CategoriesSection.module.css';
@@ -23,6 +23,9 @@ interface CategoryItem {
 
 interface CategoriesSectionProps {
     dynamicCategories?: CategoryItem[];
+    useCarousel?: boolean; // New prop to toggle between grid and carousel
+    title?: string;
+    subtitle?: string;
 }
 
 const slugify = (value: string) => value
@@ -35,29 +38,31 @@ const slugify = (value: string) => value
 const normalizeCategoryUrl = (url: string, title: string) => {
     if (!url) return '/collections/products';
 
-    // If it's already a full collection products URL, keep it
     if (url.includes('/collections/products')) {
         return url;
     }
 
-    // If it points to /products, rewrite to /collections/products
     if (url.startsWith('/products')) {
         return url.replace('/products', '/collections/products');
     }
 
-    // If it's /collections/bridal, /collections/traditional, /collections/lightweight, etc.
     if (url.startsWith('/collections/')) {
         const categorySlug = url.split('/').pop() || slugify(title);
         return `/collections/products?category=${encodeURIComponent(categorySlug)}`;
     }
 
-    // Default to /collections/products with category slug
     const slug = slugify(title);
     return `/collections/products?category=${encodeURIComponent(slug)}`;
 };
 
-const CategoriesSection = ({ dynamicCategories }: CategoriesSectionProps) => {
+const CategoriesSection = ({ 
+    dynamicCategories, 
+    useCarousel = true, 
+    title = "Shop by Category",
+    subtitle = "Discover our exquisite collection of silk sarees"
+}: CategoriesSectionProps) => {
     const router = useRouter();
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     // Use dynamic data or fallback to local static data
     const categories = dynamicCategories && dynamicCategories.length > 0 
@@ -99,8 +104,77 @@ const CategoriesSection = ({ dynamicCategories }: CategoriesSectionProps) => {
         router.push(targetUrl);
     };
 
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const scrollAmount = 400;
+            scrollContainerRef.current.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    // Render Carousel View only if requested and there are more than 3 categories
+    const showAsCarousel = useCarousel && categories.length > 3;
+
+    if (showAsCarousel) {
+        return (
+            <div className={styles.sectionContainer}>
+                {/* Header Section */}
+                <div className={styles.headerWrapper}>
+                    <h2 className={styles.sectionTitle}>{title}</h2>
+                    <p className={styles.sectionSubtitle}>{subtitle}</p>
+                    <div className={styles.titleAccent}></div>
+                </div>
+
+                <div className={styles.carouselWrapper}>
+                    <button 
+                        className={`${styles.arrowBtn} ${styles.arrowLeft}`}
+                        onClick={() => scroll('left')}
+                        aria-label="Scroll left"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+
+                    <div className={styles.scrollContainer} ref={scrollContainerRef}>
+                        {categories.map((category) => (
+                            <div key={category.id} className={styles.cardWrapper}>
+                                <CategoryCard
+                                    title={category.title}
+                                    count={category.count}
+                                    imageUrl={category.imageUrl}
+                                    onClick={handleCardClick}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    <button 
+                        className={`${styles.arrowBtn} ${styles.arrowRight}`}
+                        onClick={() => scroll('right')}
+                        aria-label="Scroll right"
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    // Render Grid View (Default - matches your updated CategoryCard)
     return (
         <div className={styles.sectionContainer}>
+            {/* Header Section with aesthetic feel */}
+            <div className={styles.headerWrapper}>
+                <h2 className={styles.sectionTitle}>{title}</h2>
+                <p className={styles.sectionSubtitle}>{subtitle}</p>
+                <div className={styles.titleAccent}></div>
+            </div>
+
             <div className={`row g-4 justify-content-center ${styles.customGutter}`}>
                 {categories.map((category) => (
                     <div key={category.id} className="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
@@ -118,4 +192,3 @@ const CategoriesSection = ({ dynamicCategories }: CategoriesSectionProps) => {
 };
 
 export default CategoriesSection;
-

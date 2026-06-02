@@ -2,7 +2,7 @@
 
 /* ── Hero Section ── */
 .contact_hero_section {
-    background-image: url('../../../../assets/images/herobg.png');
+    background-image: url('/herobg.png');
     background-size: cover;
     background-position: center;
     height: 589px;
@@ -77,6 +77,34 @@
     cursor: pointer;
     transition: background-color 0.25s ease, transform 0.15s ease;
     align-self: flex-start;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact_hero_btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 20%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-25deg);
+    animation: contactBtnShimmer 4.5s infinite linear;
+}
+
+@keyframes contactBtnShimmer {
+    0% {
+        left: -150%;
+    }
+    100% {
+        left: 150%;
+    }
 }
 
 .contact_hero_btn:hover {
@@ -96,11 +124,50 @@
     height: 100%;
 }
 
+.contact_hero_image_wrapper {
+    overflow: visible;
+    width: 586px;
+    height: 660px;
+    max-width: 100%;
+    position: relative;
+    transform: translateY(71px);
+}
+
+.zoom-in-image {
+    animation: slowZoomIn 8s ease-out infinite alternate;
+    transform-origin: center center;
+    width: 100%;
+    height: auto;
+    opacity: 0;
+    animation: slowZoomIn 8s ease-out infinite alternate, fadeIn 1s ease-out forwards;
+}
+
+@keyframes slowZoomIn {
+    0% {
+        transform: scale(1);
+    }
+    100% {
+        transform: scale(1.12);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.contact_hero_image_wrapper:hover .zoom-in-image {
+    animation-play-state: paused;
+}
+
 .contact_hero_img {
     width: 586px;
     height: 660px;
     object-fit: cover;
-    transform: translateY(71px);
 }
 
 /* ── Responsive ── */
@@ -113,6 +180,10 @@
 @media (max-width: 1199px) {
     .contact_hero_title {
         font-size: 42px;
+    }
+    .contact_hero_image_wrapper {
+        width: 380px;
+        height: 480px;
     }
     .contact_hero_img {
         width: 380px;

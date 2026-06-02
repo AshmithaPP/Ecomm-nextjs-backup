@@ -1,23 +1,55 @@
+/* CategoriesSection.module.css */
 .sectionContainer {
     max-width: 1380px;
-    margin: 30px auto;
-    /* Centered, top margin for separation from Hero */
-    padding: 0 15px;
+    margin: 50px auto;
+    padding: 0 20px;
 }
 
-.titleHeader {
+/* Header styling to match aesthetic */
+.headerWrapper {
     text-align: center;
-    margin-bottom: 40px;
-    font-family: 'Jost', sans-serif;
-    color: #333333;
+    margin-bottom: 48px;
 }
 
+.sectionTitle {
+    font-family: 'Jost', 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    letter-spacing: -0.5px;
+    color: #1a1a2e;
+    margin: 0 0 12px 0;
+    position: relative;
+    display: inline-block;
+}
+
+.sectionSubtitle {
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: #666;
+    margin: 0 0 16px 0;
+}
+
+.titleAccent {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #c9a96e, #e8cfa6, #c9a96e);
+    margin: 0 auto;
+    border-radius: 3px;
+}
+
+.customGutter {
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
+}
+
+/* Carousel Styles (when useCarousel = true) */
 .carouselWrapper {
     position: relative;
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 40px;
+    padding: 0 48px;
 }
 
 .scrollContainer {
@@ -25,25 +57,41 @@
     gap: 30px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 20px 0;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    padding: 20px 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .scrollContainer::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
 }
 
 .cardWrapper {
     flex: 0 0 auto;
 }
 
-.arrowLeft, .arrowRight {
+/* Aesthetic arrow buttons */
+.arrowBtn {
     position: absolute;
     z-index: 10;
+    width: 44px;
+    height: 44px;
     background: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 50%;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.arrowBtn:hover {
+    background: #dabd66; /* Custom brand gold matching the User's choice */
+    border-color: #dabd66;
+    color: white;
+    transform: scale(1.05);
 }
 
 .arrowLeft {
@@ -54,20 +102,72 @@
     right: -10px;
 }
 
+/* Fade edges removed for a crisp, solid edge-to-edge category grid */
+
+/* Responsive adjustments */
 @media (max-width: 1200px) {
     .sectionContainer {
         max-width: 100%;
     }
+    
     .carouselWrapper {
-        padding: 0 20px;
+        padding: 0 36px;
+    }
+    
+    .scrollContainer {
+        gap: 20px;
     }
 }
 
 @media (max-width: 768px) {
-    .carouselWrapper {
-        padding: 0 10px;
+    .sectionContainer {
+        margin: 30px auto;
+        padding: 0 16px;
     }
-    .arrowLeft, .arrowRight {
-        display: none; /* Use touch scroll on mobile */
+    
+    .sectionTitle {
+        font-size: 1.8rem;
+    }
+    
+    .sectionSubtitle {
+        font-size: 0.95rem;
+    }
+    
+    .carouselWrapper {
+        padding: 0 28px;
+    }
+    
+    .arrowBtn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .arrowLeft {
+        left: -8px;
+    }
+    
+    .arrowRight {
+        right: -8px;
+    }
+    
+    /* Disable mask on mobile for better visibility */
+    .scrollContainer {
+        mask-image: none;
+        -webkit-mask-image: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .carouselWrapper {
+        padding: 0 20px;
+    }
+    
+    .arrowBtn {
+        display: none;
+    }
+    
+    .scrollContainer {
+        padding: 16px 4px;
+        gap: 16px;
     }
 }
