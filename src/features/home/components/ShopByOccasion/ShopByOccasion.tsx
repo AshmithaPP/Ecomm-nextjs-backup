@@ -60,13 +60,18 @@ const ShopByOccasion = ({ dynamicData }: ShopByOccasionProps) => {
     { id: 5, name: 'Gift Sarees', image: collection2, url: '/collections/products?occasion=gifting' },
   ];
 
+  // Duplicate displayData 4 times to ensure a seamless infinite scroll loop
+  const scrollItems = [...displayData, ...displayData, ...displayData, ...displayData];
+
   return (
     <section className="shop-by-occasion-section py-5">
       <div className="container">
         <h2 className="section-heading mb-5 text-center">Shop By Occasion</h2>
-        <div className="row justify-content-center row-cols-2 row-cols-md-3 row-cols-lg-5 g-4">
-          {displayData.map((item) => (
-            <div className="col d-flex justify-content-center" key={item.id}>
+      </div>
+      <div className="infinite-scroll-container">
+        <div className="infinite-scroll-track">
+          {scrollItems.map((item, index) => (
+            <div key={`${item.id}-${index}`} className="infinite-scroll-item">
               <CircleCard image={item.image} title={item.name} url={item.url} />
             </div>
           ))}

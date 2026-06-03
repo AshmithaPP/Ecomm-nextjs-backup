@@ -84,3 +84,58 @@
     font-size: 28px;
   }
 }
+
+/* ============================================================
+   INFINITE HORIZONTAL SCROLL ANIMATION
+   ============================================================ */
+.infinite-scroll-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  padding: 15px 0;
+  background-color: transparent;
+}
+
+.infinite-scroll-track {
+  display: flex;
+  gap: 40px; /* Constant premium spacing between the circle cards */
+  width: max-content;
+  animation: infiniteOccasionScroll 24s linear infinite;
+  will-change: transform;
+}
+
+.infinite-scroll-item {
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+/* Pause the animation immediately when hovered anywhere over the container */
+.infinite-scroll-container:hover .infinite-scroll-track {
+  animation-play-state: paused;
+}
+
+/* Pure CSS hardware-accelerated seamless looping animation */
+@keyframes infiniteOccasionScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-25%); /* Translates by exactly 1 full set (out of 4 repeated sets) */
+  }
+}
+
+/* Responsive adjustments for animation speed and spacing on smaller viewports */
+@media (max-width: 768px) {
+  .infinite-scroll-track {
+    gap: 30px;
+    animation-duration: 18s;
+  }
+}
+
+@media (max-width: 576px) {
+  .infinite-scroll-track {
+    gap: 20px;
+    animation-duration: 14s;
+  }
+}
+

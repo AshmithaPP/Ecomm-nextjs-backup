@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import WishlistButton from 'components/common/WishlistButton';
 import AddToCartButton from 'components/common/AddToCartButton';
@@ -10,8 +10,10 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { resolveMediaUrl } from '@/config/api';
 
-const ProductCard = ({ product }: { product: any }) => {
+const ProductCard = ({ product, className, cardClassName, imageClassName }: { product: any; className?: string; cardClassName?: string; imageClassName?: string }) => {
     const { title, name, image, image_url, discount, discountedPrice, price, originalPrice, original_price, discountBg, id, product_id, slug, stock_status } = product;
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
     const { isAuthenticated } = useAuthStore();
     const router = useRouter();
     const pathname = usePathname();
@@ -19,8 +21,21 @@ const ProductCard = ({ product }: { product: any }) => {
     const rawId = product_id || id;
     const pid = (typeof rawId === 'object' && rawId !== null) ? (rawId.id || rawId.product_id) : rawId;
     
-        const displayTitle = name || title;
+    const displayTitle = name || title;
     const imageUrl = resolveMediaUrl(image_url || image);
+
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setImageLoaded(true);
+        }
+    }, [imageUrl]);
+    
+    // Resolve secondary image if available
+    const gallery = product.media?.gallery_images || product.media?.gallery || product.gallery_images || product.gallery || [];
+    const secondaryUrl = Array.isArray(gallery)
+        ? gallery.find((url: string) => url && resolveMediaUrl(url) !== imageUrl)
+        : null;
+    const secondaryImageUrl = secondaryUrl ? resolveMediaUrl(secondaryUrl) : null;
     
     const cleanPriceStr = discountedPrice || price || '';
     const cleanOriginalPriceStr = originalPrice || original_price || '';
@@ -31,19 +46,11 @@ const ProductCard = ({ product }: { product: any }) => {
     const averageRating = product.rating?.average || product.rating || 0;
     const reviewsCount = product.rating?.count || product.reviews_count || 0;
 
-    // Strictly bind to the API discount values and fallback if 0
-    const apiDiscountPercentage = product.discount_percentage || (product.product && product.product.discount_percentage) || 0;
-    let calculatedDiscount = "";
-    if (apiDiscountPercentage > 0) {
-        calculatedDiscount = `${apiDiscountPercentage}% OFF`;
-    } else if (!isNaN(originalPriceNum) && !isNaN(priceNum) && originalPriceNum > priceNum) {
-        const percentage = Math.round(((originalPriceNum - priceNum) / originalPriceNum) * 100);
-        if (percentage > 0) {
-            calculatedDiscount = `${percentage}% OFF`;
-        }
-    } else {
-        calculatedDiscount = `0% OFF`;
-    }
+    // Only use API's explicit discount_percentage — do NOT back-calculate from price diff
+    // because the API may intentionally send discount_percentage: 0 even when prices differ
+    const apiDiscountPercentage = product.discount_percentage ?? (product.product?.discount_percentage ?? 0);
+    const hasRealDiscount = Number(apiDiscountPercentage) > 0;
+    const calculatedDiscount = hasRealDiscount ? `${apiDiscountPercentage}% OFF` : "";
 
     const renderStars = (ratingVal: number) => {
         const stars = [];
@@ -75,25 +82,40 @@ const ProductCard = ({ product }: { product: any }) => {
     };
 
     return (
-        <div className={styles.cardItem} onClick={handleCardClick} style={{ cursor: 'pointer' }}>
-            <div className={styles.productCard}>
+        <div className={`${styles.cardItem} ${className || ''}`} onClick={handleCardClick} style={{ cursor: 'pointer' }}>
+            <div className={`${styles.productCard} ${secondaryImageUrl ? styles.hasSecondary : ''} ${cardClassName || ''}`}>
                 {/* Image Section */}
-                <div className={styles.imageWrapper}>
+                <div className={`${styles.imageWrapper} ${imageClassName || ''}`}>
                     {imageUrl && (
                         typeof imageUrl === 'string' ? (
-                            <img src={imageUrl} alt={displayTitle} className={styles.productImage} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img 
+                                ref={imgRef}
+                                src={imageUrl} 
+                                alt={displayTitle} 
+                                className={`${styles.productImage} ${styles.primaryImage} ${imageLoaded ? styles.imageLoaded : ''}`} 
+                                onLoad={() => setImageLoaded(true)}
+                                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                            />
                         ) : (
-                            <Image src={imageUrl} alt={displayTitle} className={styles.productImage} width={287} height={300} />
+                            <Image 
+                                src={imageUrl} 
+                                alt={displayTitle} 
+                                className={`${styles.productImage} ${styles.primaryImage} ${imageLoaded ? styles.imageLoaded : ''}`} 
+                                onLoad={() => setImageLoaded(true)}
+                                width={287} 
+                                height={300} 
+                            />
                         )
                     )}
 
-                    <div className={styles.tagsContainer}>
-                        {discount && (
-                            <div className={styles.discountBadge}>
-                                {discount}
-                            </div>
-                        )}
-                    </div>
+                    {secondaryImageUrl && (
+                        <img 
+                            src={secondaryImageUrl} 
+                            alt={`${displayTitle} - Alternate View`} 
+                            className={`${styles.productImage} ${styles.secondaryImage}`}
+                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                    )}
 
                     <div className={styles.wishlistContainer}>
                         <WishlistButton product={product} />
@@ -120,11 +142,15 @@ const ProductCard = ({ product }: { product: any }) => {
                         </p>
 
                         {/* 4. Discount tag */}
-                        <div className={styles.discountTagPill}>
-                            {calculatedDiscount.toLowerCase().includes('off') 
-                                ? `Upto ${calculatedDiscount}` 
-                                : `${calculatedDiscount} OFF`}
-                        </div>
+                        {hasRealDiscount ? (
+                            <div className={styles.discountTagPill}>
+                                Upto {calculatedDiscount}
+                            </div>
+                        ) : (
+                            <div className={styles.newArrivalPill}>
+                                New Arrival
+                            </div>
+                        )}
 
                         {/* 5. Price & MRP Strikeout */}
                         <div className={styles.priceRow}>

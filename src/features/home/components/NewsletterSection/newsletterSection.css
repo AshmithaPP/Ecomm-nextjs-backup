@@ -7,7 +7,9 @@
 
 /* Container limits to matches grid max content style */
 .newsletter-container {
-  max-width: 1254px; /* Layout max width */
+  max-width: 1440px !important;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* Newsletter Card */

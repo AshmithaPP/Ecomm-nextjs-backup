@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TestimonialCard from './TestimonialCard';
 import ArrowButton from 'components/common/ArrowButton';
 import './testimonials.css';
@@ -23,6 +23,7 @@ interface TestimonialsProps {
 
 const Testimonials = ({ dynamicTestimonials }: TestimonialsProps) => {
     const [activeIndex, setActiveIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
     const testimonials = dynamicTestimonials && dynamicTestimonials.length > 0 
         ? dynamicTestimonials.map(t => ({
             image: t.image_url ? resolveMediaUrl(t.image_url) : collection1,
@@ -49,6 +50,17 @@ const Testimonials = ({ dynamicTestimonials }: TestimonialsProps) => {
         setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
     };
 
+    // ── Auto-scroll autoplay effect ──────────────────────────────────────────
+    useEffect(() => {
+        if (testimonials.length <= 1 || isHovered) return;
+
+        const interval = setInterval(() => {
+            setActiveIndex((prev) => (prev === testimonials.length - 1 ? 0 : prev + 1));
+        }, 2500); // Cycles every 4 seconds
+
+        return () => clearInterval(interval);
+    }, [testimonials.length, activeIndex, isHovered]);
+
     const getCardClass = (index: number) => {
         const total = testimonials.length;
         if (total === 1) return 'center-card';
@@ -63,7 +75,13 @@ const Testimonials = ({ dynamicTestimonials }: TestimonialsProps) => {
             <div className="container">
                 <h2 className="testimonials-section-title">Our Customer Testimonials</h2>
                 
-                <div className="carousel-wrapper">
+                <div 
+                    className="carousel-wrapper"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                    onTouchStart={() => setIsHovered(true)}
+                    onTouchEnd={() => setIsHovered(false)}
+                >
                     <div className="carousel-container">
                         {testimonials.map((testimonial, index) => (
                             <div 

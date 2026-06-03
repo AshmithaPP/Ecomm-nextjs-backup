@@ -156,7 +156,7 @@ const CustomerFavorites = () => {
     if (favoritesLoading) {
         return (
             <section className="customer-favorites-section">
-                <div className="container">
+                <div className="container favorites-container">
                     <div className="favorites-header">
                         <h2 className="favorites-title">Customer Favorites</h2>
                         <p className="favorites-subtitle">See what our community loves</p>
@@ -185,7 +185,7 @@ const CustomerFavorites = () => {
 
     return (
         <section className="customer-favorites-section">
-            <div className="container">
+            <div className="container favorites-container">
                 <div className="favorites-header">
                     <h2 className="favorites-title">Customer Favorites</h2>
                     <p className="favorites-subtitle">See what our community loves</p>

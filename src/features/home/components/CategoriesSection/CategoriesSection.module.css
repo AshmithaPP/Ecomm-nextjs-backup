@@ -1,23 +1,58 @@
 /* CategoriesSection.module.css */
+
+/* ── Scroll-reveal keyframe ─────────────────────────────────────────────── */
+@keyframes fadeInUpSection {
+    from {
+        opacity: 0;
+        transform: translateY(28px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hidden state — elements start invisible and 28px below their final position */
+.revealHidden {
+    opacity: 0;
+    transform: translateY(28px);
+    /* transition is intentionally omitted here; it's applied via revealVisible */
+}
+
+/* Visible state — smoothly transitions to final position */
+.revealVisible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+        opacity  0.68s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.68s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Grid card wrapper override — keeps d-flex working inside the column */
+.cardRevealWrap {
+    will-change: opacity, transform;
+}
+
 .sectionContainer {
     max-width: 1380px;
-    margin: 50px auto;
-    padding: 0 20px;
+    margin: 20px auto;
+    padding: 0 16px;
 }
+
 
 /* Header styling to match aesthetic */
 .headerWrapper {
     text-align: center;
-    margin-bottom: 48px;
+    margin-bottom: 24px;
 }
 
 .sectionTitle {
     font-family: 'Jost', 'Poppins', sans-serif;
     font-weight: 600;
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     letter-spacing: -0.5px;
     color: #1a1a2e;
-    margin: 0 0 12px 0;
+    margin: 8px 0 12px 0;
     position: relative;
     display: inline-block;
 }
@@ -49,7 +84,7 @@
     display: flex;
     align-items: center;
     width: 100%;
-    padding: 0 48px;
+    padding: 0;
 }
 
 .scrollContainer {
@@ -57,9 +92,10 @@
     gap: 30px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 20px 8px;
+    padding: 10px 4px;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
 }
 
 .scrollContainer::-webkit-scrollbar {
@@ -68,38 +104,7 @@
 
 .cardWrapper {
     flex: 0 0 auto;
-}
-
-/* Aesthetic arrow buttons */
-.arrowBtn {
-    position: absolute;
-    z-index: 10;
-    width: 44px;
-    height: 44px;
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: #333;
-}
-
-.arrowBtn:hover {
-    background: #dabd66; /* Custom brand gold matching the User's choice */
-    border-color: #dabd66;
-    color: white;
-    transform: scale(1.05);
-}
-
-.arrowLeft {
-    left: -10px;
-}
-
-.arrowRight {
-    right: -10px;
+    scroll-snap-align: center;
 }
 
 /* Fade edges removed for a crisp, solid edge-to-edge category grid */
@@ -110,10 +115,6 @@
         max-width: 100%;
     }
     
-    .carouselWrapper {
-        padding: 0 36px;
-    }
-    
     .scrollContainer {
         gap: 20px;
     }
@@ -121,8 +122,8 @@
 
 @media (max-width: 768px) {
     .sectionContainer {
-        margin: 30px auto;
-        padding: 0 16px;
+        margin: 16px auto;
+        padding: 0 12px;
     }
     
     .sectionTitle {
@@ -133,41 +134,54 @@
         font-size: 0.95rem;
     }
     
-    .carouselWrapper {
-        padding: 0 28px;
-    }
-    
-    .arrowBtn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .arrowLeft {
-        left: -8px;
-    }
-    
-    .arrowRight {
-        right: -8px;
-    }
-    
     /* Disable mask on mobile for better visibility */
     .scrollContainer {
         mask-image: none;
         -webkit-mask-image: none;
     }
+
+    .cardWrapper {
+        width: 320px;
+        max-width: 85vw;
+    }
 }
 
 @media (max-width: 576px) {
-    .carouselWrapper {
-        padding: 0 20px;
-    }
-    
-    .arrowBtn {
-        display: none;
-    }
-    
     .scrollContainer {
-        padding: 16px 4px;
+        padding: 8px 2px;
         gap: 16px;
     }
+}
+
+@media (max-width: 480px) {
+    .cardWrapper {
+        width: 280px;
+    }
+}
+
+/* Dots Indicator Container */
+.indicatorsWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.indicatorDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d1d1d6;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.indicatorDotActive {
+    width: 24px;
+    height: 8px;
+    border-radius: 4px;
+    background-color: #dabd66; /* Custom brand gold matching the User's choice */
 }

@@ -7,7 +7,9 @@
 
 /* Section Container */
 .blog-container {
-  max-width: 1254px; /* From spec inner layout */
+  max-width: 1440px !important;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* Title Header */
@@ -25,7 +27,7 @@
 /* Blog Card Component */
 .blog-card {
   width: 100%;
-  max-width: 402px; /* From spec */
+  max-width: none; /* Removed fixed constraint to allow responsive column fill */
   background: transparent;
   display: flex;
   flex-direction: column;

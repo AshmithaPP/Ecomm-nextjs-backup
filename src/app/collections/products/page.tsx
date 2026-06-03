@@ -7,6 +7,7 @@ import Breadcrumbs from 'components/ui/Breadcrumbs/Breadcrumbs';
 import FilterSidebar from 'features/products/components/Filters/FilterSidebar';
 import ProductCard from 'components/ui/ProductCard';
 import Pagination from 'features/products/components/Pagination/Pagination';
+import SearchInput from 'components/ui/SearchInput';
 
 import './productsPage.css';
 
@@ -132,26 +133,16 @@ const ProductsContent = () => {
                             </h2>
 
                             <div className="products-meta-controls d-flex align-items-center gap-3">
-                                <div className="products-search-box">
-                                    <input
-                                        type="text"
-                                        placeholder="Search in this collection..."
-                                        className="search-input"
-                                        defaultValue={activeFilters.search || ''}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
-                                                useProductStore.setState((state) => ({
-                                                    activeFilters: { ...state.activeFilters, search: e.currentTarget.value, page: '1' }
-                                                }));
-                                            }
-                                        }}
-                                    />
-                                    <i className="bi bi-search search-icon"></i>
-                                </div>
-
-                                <span className="products-count text-muted d-none d-lg-block">
-                                    {loading ? 'Searching...' : `${pagination?.total_products || 0} Products`}
-                                </span>
+                                <SearchInput
+                                    placeholder="Search in this collection..."
+                                    value={activeFilters.search || ''}
+                                    onSearch={(val) => {
+                                        useProductStore.setState((state) => ({
+                                            activeFilters: { ...state.activeFilters, search: val, page: '1' }
+                                        }));
+                                    }}
+                                    className="products-search-box"
+                                />
 
                                 <div className="sort-dropdown dropdown">
                                     <button
@@ -188,8 +179,13 @@ const ProductsContent = () => {
                             ))
                         ) : products?.length > 0 ? (
                             products.map((product) => (
-                                <div className="col" key={product.id || product.product_id}>
-                                    <ProductCard product={product} />
+                                <div className="col d-flex justify-content-center" key={product.id || product.product_id}>
+                                    <ProductCard 
+                                        product={product} 
+                                        className="catalog-card-wrapper"
+                                        cardClassName="catalog-card-body"
+                                        imageClassName="catalog-card-image"
+                                    />
                                 </div>
                             ))
                         ) : (

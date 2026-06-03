@@ -54,26 +54,26 @@ const TrendingPicks = ({ data }: TrendingPicksProps) => {
         <section className="trending-picks-section">
             <div className="container">
                 <h2 className="trending-title">Trending Picks</h2>
-                
-                <div className="trending-grid">
-                    {/* Top Section Layout */}
-                    <div className="top-section">
-                        <div className="left-column">
-                            {displayData[0] && <TrendingCard {...displayData[0]} />}
-                        </div>
-                        <div className="right-column">
-                            {displayData.slice(1, 5).map(card => (
-                                <TrendingCard key={card.id} {...card} />
-                            ))}
-                        </div>
+            </div>
+            
+            <div className="trending-grid">
+                {/* Top Section Layout */}
+                <div className="top-section">
+                    <div className="left-column">
+                        {displayData[0] && <TrendingCard {...displayData[0]} />}
                     </div>
-
-                    {/* Bottom Section Layout */}
-                    <div className="bottom-section">
-                        {displayData.slice(5).map(card => (
+                    <div className="right-column">
+                        {displayData.slice(1, 5).map(card => (
                             <TrendingCard key={card.id} {...card} />
                         ))}
                     </div>
+                </div>
+
+                {/* Bottom Section Layout */}
+                <div className="bottom-section">
+                    {displayData.slice(5).map(card => (
+                        <TrendingCard key={card.id} {...card} />
+                    ))}
                 </div>
             </div>
         </section>

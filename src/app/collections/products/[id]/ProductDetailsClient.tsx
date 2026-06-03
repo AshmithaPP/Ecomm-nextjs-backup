@@ -11,7 +11,7 @@ import WhyChoose from 'features/products/components/WhyChoose/WhyChoose';
 import ProductSpecifications from 'features/products/components/ProductSpecifications/ProductSpecifications';
 import AuthenticitySection from 'features/products/components/AuthenticitySection/AuthenticitySection';
 import CustomerReviews from 'features/products/components/CustomerReviews/CustomerReviews';
-import ProductCard from 'features/products/components/ProductCard/ProductCard';
+import ProductGridCard from 'features/products/components/ProductCard/ProductGridCard';
 import ArrowButton from 'components/common/ArrowButton';
 import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
 import RecentlyViewedCarousel from 'features/products/components/RecentlyViewedCarousel/RecentlyViewedCarousel';
@@ -164,7 +164,7 @@ const ProductDetailsClient = () => {
                             <div className="related-products-track" ref={scrollRef}>
                                 {product.related_products.map((item: any) => (
                                     <div className="related-product-card" key={item.product_id}>
-                                        <ProductCard product={{
+                                        <ProductGridCard product={{
                                             ...item,
                                             title: item.name,
                                             image: item.image_url,

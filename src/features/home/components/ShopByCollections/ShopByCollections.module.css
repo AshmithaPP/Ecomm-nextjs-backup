@@ -33,7 +33,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    max-width: 1211px;
+    max-width: 1345px;
     margin: 0 auto;
 }
 
@@ -57,8 +57,8 @@
 
 /* CARD ITEM WRAPPER — holds card + text below */
 .cardItem {
-    flex: 0 0 287px;
-    min-width: 287px;
+    flex: 0 0 320px;
+    min-width: 320px;
     display: flex;
     flex-direction: column;
     align-items: center;

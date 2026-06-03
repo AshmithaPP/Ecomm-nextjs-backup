@@ -1,8 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import './productCard.css';
+import './productGridCard.css';
 import { useWishlistStore } from '@/store/wishlistStore';
 import AddToCartButton from 'components/common/AddToCartButton';
 import Image from 'next/image';
@@ -10,11 +10,11 @@ import { resolveMediaUrl } from '@/config/api';
 import { useAuthStore } from '@/store/authStore';
 import RatingStars from '@/components/ui/RatingStars/RatingStars';
 
-interface ProductCardProps {
+interface ProductGridCardProps {
     product: any;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductGridCard = ({ product }: ProductGridCardProps) => {
     const { 
         name, title, 
         price, originalPrice, 
@@ -26,6 +26,8 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const pathname = usePathname();
     const { toggleWishlist, isInWishlist } = useWishlistStore();
     const { isAuthenticated } = useAuthStore();
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     const rawId = product.product_id || product.id || (product.product && (product.product.product_id || product.product.id));
     const pid = (typeof rawId === 'object' && rawId !== null) ? (rawId.id || rawId.product_id) : rawId;
@@ -36,6 +38,19 @@ const ProductCard = ({ product }: ProductCardProps) => {
     const displayPrice = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : price;
     const displayOriginalPrice = typeof originalPrice === 'string' ? parseFloat(originalPrice.replace(/[^0-9.]/g, '')) : originalPrice;
     const imageUrl = resolveMediaUrl(image_url || image);
+
+    useEffect(() => {
+        if (imgRef.current && imgRef.current.complete) {
+            setImageLoaded(true);
+        }
+    }, [imageUrl]);
+
+    // Resolve secondary image if available
+    const gallery = product.media?.gallery_images || product.media?.gallery || product.gallery_images || product.gallery || [];
+    const secondaryUrl = Array.isArray(gallery)
+        ? gallery.find((url: string) => url && resolveMediaUrl(url) !== imageUrl)
+        : null;
+    const secondaryImageUrl = secondaryUrl ? resolveMediaUrl(secondaryUrl) : null;
 
     const isOutOfStock = stock_status === 'out_of_stock' || stockStatus === 'out_of_stock' || stock_status === 'sold_out';
 
@@ -63,14 +78,25 @@ const ProductCard = ({ product }: ProductCardProps) => {
     };
 
     return (
-        <div className="product-card" onClick={handleNavigate} style={{ cursor: 'pointer' }}>
+        <div className={`product-card ${secondaryImageUrl ? 'has-secondary' : ''}`} onClick={handleNavigate} style={{ cursor: 'pointer' }}>
             {/* Image Section */}
             <div className="product-image-container">
                 {imageUrl && (
                     <img 
+                        ref={imgRef}
                         src={imageUrl} 
                         alt={displayTitle} 
-                        className="product-image" 
+                        className={`product-image primary-image ${imageLoaded ? 'image-loaded' : ''}`} 
+                        onLoad={() => setImageLoaded(true)}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                )}
+
+                {secondaryImageUrl && (
+                    <img 
+                        src={secondaryImageUrl} 
+                        alt={`${displayTitle} - Alternate View`} 
+                        className="product-image secondary-image"
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                 )}
@@ -143,5 +169,5 @@ const ProductCard = ({ product }: ProductCardProps) => {
     );
 };
 
-export default ProductCard;
+export default ProductGridCard;
 

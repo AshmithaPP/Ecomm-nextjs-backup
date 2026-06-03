@@ -6,6 +6,13 @@
     position: relative;
 }
 
+.favorites-container {
+    max-width: 1440px !important;
+    padding-left: 24px;
+    padding-right: 24px;
+    margin: 0 auto;
+}
+
 .favorites-header {
     text-align: center;
     margin-bottom: 40px;

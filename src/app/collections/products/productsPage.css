@@ -165,3 +165,22 @@
         max-width: 200px;
     }
 }
+
+/* ====================================================
+   CATALOG GRID CARD OVERRIDES
+   ==================================================== */
+.catalog-card-wrapper {
+    width: 100% !important;
+    max-width: 380px !important;
+    margin: 0 auto;
+}
+
+.catalog-card-body {
+    width: 100% !important;
+    max-width: 380px !important;
+    height: 535px !important; /* Premium tall card height */
+}
+
+.catalog-card-image {
+    height: 300px !important; /* Premium tall image height */
+}
