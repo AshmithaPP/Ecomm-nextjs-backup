@@ -11,7 +11,7 @@ import WhyChoose from 'features/products/components/WhyChoose/WhyChoose';
 import ProductSpecifications from 'features/products/components/ProductSpecifications/ProductSpecifications';
 import AuthenticitySection from 'features/products/components/AuthenticitySection/AuthenticitySection';
 import CustomerReviews from 'features/products/components/CustomerReviews/CustomerReviews';
-import ProductGridCard from 'features/products/components/ProductCard/ProductGridCard';
+import ProductCard from 'components/ui/ProductCard';
 import ArrowButton from 'components/common/ArrowButton';
 import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
 import RecentlyViewedCarousel from 'features/products/components/RecentlyViewedCarousel/RecentlyViewedCarousel';
@@ -148,7 +148,7 @@ const ProductDetailsClient = () => {
 
             {/* Related Products Section */}
             {product.related_products?.length > 0 && (
-                <div className="row mt-5 mb-4 justify-content-center">
+                <div className="row mt-4 mb-4 justify-content-center">
                     <div className="col-12">
                         <h3 className="section-title mb-4 text-center">Related Products</h3>
                         
@@ -164,11 +164,17 @@ const ProductDetailsClient = () => {
                             <div className="related-products-track" ref={scrollRef}>
                                 {product.related_products.map((item: any) => (
                                     <div className="related-product-card" key={item.product_id}>
-                                        <ProductGridCard product={{
+                                        <ProductCard product={{
                                             ...item,
                                             title: item.name,
                                             image: item.image_url,
-                                            discountedPrice: `₹${parseFloat(item.price).toLocaleString('en-IN')}`
+                                            price: item.price,
+                                            originalPrice: item.original_price ?? item.mrp ?? item.price,
+                                            rating: {
+                                                average: item.rating?.value ?? item.rating?.average ?? item.rating ?? 0,
+                                                count: item.rating?.count ?? 0
+                                            },
+                                            stock_status: item.stock_status
                                         }} />
                                     </div>
                                 ))}

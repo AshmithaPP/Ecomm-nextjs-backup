@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useRecentlyViewedStore } from '@/store/recentlyViewedStore';
-import ProductGridCard from 'features/products/components/ProductCard/ProductGridCard';
+import ProductCard from 'components/ui/ProductCard';
 import ArrowButton from 'components/common/ArrowButton';
 import './recentlyViewedCarousel.css';
 
@@ -90,13 +90,16 @@ const RecentlyViewedCarousel = () => {
                 <div className="related-products-track" ref={scrollRef} onScroll={checkScroll}>
                     {recentlyViewed.map((item: any) => (
                         <div className="related-product-card" key={item.recently_viewed_id}>
-                            <ProductGridCard product={{
+                            <ProductCard product={{
                                 ...item,
                                 title: item.name,
                                 image: item.image,
                                 price: item.price,
                                 originalPrice: item.mrp,
-                                rating: { average: item.rating.value, count: item.rating.count },
+                                rating: { 
+                                    average: item.rating?.value ?? item.rating?.average ?? 0, 
+                                    count: item.rating?.count ?? 0 
+                                },
                                 stock_status: item.stock_status
                             }} />
                         </div>
