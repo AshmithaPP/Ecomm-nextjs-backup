@@ -116,11 +116,12 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
                 phone: "+91 98765 43210",
                 address: "123, Silk Bazaar, Kanchipuram, Tamil Nadu - 631501"
             },
-            social_links: fs?.social_links || {
-                youtube: "https://youtube.com",
-                facebook: "https://facebook.com",
-                whatsapp: "https://wa.me",
-                instagram: "https://instagram.com"
+            social_links: {
+                youtube: fs?.social_links?.youtube || "https://youtube.com",
+                facebook: fs?.social_links?.facebook || "https://facebook.com",
+                whatsapp: fs?.social_links?.whatsapp || "https://wa.me",
+                instagram: fs?.social_links?.instagram || "https://instagram.com",
+                twitter: fs?.social_links?.twitter || "https://twitter.com"
             },
             links_group_1: fs?.links_group_1 || [
                 { path: "/", label: "Home" },

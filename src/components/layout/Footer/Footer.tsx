@@ -6,10 +6,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Footer.css';
 import LogoWhite from 'assets/images/logo/Logo-SareeEcom.png';
 import footerCards from 'assets/images/footerCards.png';
-import fbIcon from 'assets/icons/social/facebookicon.png';
-import instaIcon from 'assets/icons/social/instaicon.png';
-import linkedinIcon from 'assets/icons/social/linkedinicon.png';
-import twitterIcon from 'assets/icons/social/twittericon.png';
 import Image from 'next/image';
 
 import { useSettingsStore } from '@/store/settingsStore';
@@ -65,29 +61,29 @@ const Footer = () => {
                             </span>
                         </p>
                         
-                        <div className="social-icons" style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '16px' }}>
+                        <div className="social-icons" style={{ display: 'flex', gap: '16px', alignItems: 'center', marginTop: '16px' }}>
                             {footer.social_links?.facebook && (
                                 <a href={footer.social_links.facebook} target="_blank" rel="noopener noreferrer" className="social-icon-link">
-                                    <Image src={fbIcon} alt="Facebook" className="social-icon" width={20} height={20} />
+                                    <i className="bi bi-facebook"></i>
                                 </a>
                             )}
                             {footer.social_links?.instagram && (
                                 <a href={footer.social_links.instagram} target="_blank" rel="noopener noreferrer" className="social-icon-link">
-                                    <Image src={instaIcon} alt="Instagram" className="social-icon" width={20} height={20} />
+                                    <i className="bi bi-instagram"></i>
                                 </a>
                             )}
                             {footer.social_links?.twitter && (
                                 <a href={footer.social_links.twitter} target="_blank" rel="noopener noreferrer" className="social-icon-link">
-                                    <Image src={twitterIcon} alt="Twitter" className="social-icon" width={20} height={20} />
+                                    <i className="bi bi-twitter-x"></i>
                                 </a>
                             )}
                             {footer.social_links?.youtube && (
-                                <a href={footer.social_links.youtube} target="_blank" rel="noopener noreferrer" className="social-icon-link" style={{ fontSize: '18px', color: '#fff', display: 'flex', alignItems: 'center' }}>
+                                <a href={footer.social_links.youtube} target="_blank" rel="noopener noreferrer" className="social-icon-link">
                                     <i className="bi bi-youtube"></i>
                                 </a>
                             )}
                             {footer.social_links?.whatsapp && (
-                                <a href={footer.social_links.whatsapp} target="_blank" rel="noopener noreferrer" className="social-icon-link" style={{ fontSize: '18px', color: '#fff', display: 'flex', alignItems: 'center' }}>
+                                <a href={footer.social_links.whatsapp} target="_blank" rel="noopener noreferrer" className="social-icon-link">
                                     <i className="bi bi-whatsapp"></i>
                                 </a>
                             )}

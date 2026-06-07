@@ -71,6 +71,17 @@
     width: auto;
     height: auto;
     transition: transform 0.3s ease, opacity 0.3s ease;
+    color: #fff;
+}
+
+.social-icon-link i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    line-height: 1;
 }
 
 .social-icon-link:hover {

@@ -29,7 +29,10 @@ export const useRecentlyViewedStore = create<RecentlyViewedState>((set, get) => 
             if (guestId) headers['x-guest-id'] = guestId;
             if (token) headers['Authorization'] = `Bearer ${token}`;
 
-            const response = await fetch(`${API_BASE}/recently-viewed`, { headers });
+            const response = await fetch(`${API_BASE}/recently-viewed`, { 
+                headers,
+                cache: 'no-store'
+            });
             if (!response.ok) throw new Error('Failed to fetch recently viewed products');
             const data = await response.json();
             

@@ -37,8 +37,12 @@ const ProductCard = ({ product, className, cardClassName, imageClassName }: { pr
         : null;
     const secondaryImageUrl = secondaryUrl ? resolveMediaUrl(secondaryUrl) : null;
     
-    const cleanPriceStr = discountedPrice || price || '';
-    const cleanOriginalPriceStr = originalPrice || original_price || '';
+    const cleanPriceStr = (discountedPrice !== undefined && discountedPrice !== null && discountedPrice !== '') 
+        ? discountedPrice 
+        : (price !== undefined && price !== null && price !== '' ? price : '');
+    const cleanOriginalPriceStr = (originalPrice !== undefined && originalPrice !== null && originalPrice !== '') 
+        ? originalPrice 
+        : (original_price !== undefined && original_price !== null && original_price !== '' ? original_price : '');
     
     const priceNum = typeof cleanPriceStr === 'number' ? cleanPriceStr : parseFloat(String(cleanPriceStr).replace(/[^0-9.]/g, ''));
     const originalPriceNum = typeof cleanOriginalPriceStr === 'number' ? cleanOriginalPriceStr : parseFloat(String(cleanOriginalPriceStr).replace(/[^0-9.]/g, ''));

@@ -67,8 +67,14 @@ const RecentlyViewedCarousel = () => {
         );
     }
 
+    // Filter out deleted products
+    const filteredItems = recentlyViewed.filter((item: any) => {
+        const isDeleted = item.slug?.includes('-deleted-') || item.price === 0 || item.price === null || item.price === undefined;
+        return !isDeleted;
+    });
+
     // Hide entire section if error occurs or no items exist
-    if (error || recentlyViewed.length === 0) {
+    if (error || filteredItems.length === 0) {
         return null;
     }
 
@@ -88,7 +94,7 @@ const RecentlyViewedCarousel = () => {
 
                 {/* Scrollable Track */}
                 <div className="related-products-track" ref={scrollRef} onScroll={checkScroll}>
-                    {recentlyViewed.map((item: any) => (
+                    {filteredItems.map((item: any) => (
                         <div className="related-product-card" key={item.recently_viewed_id}>
                             <ProductCard product={{
                                 ...item,
