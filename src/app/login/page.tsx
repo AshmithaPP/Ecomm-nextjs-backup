@@ -134,7 +134,7 @@ function LoginForm() {
                         <div className="new-user-section">
                             <h3>New to SareeEcom?</h3>
                             <p>Discover exclusive collections and heritage craftsmanship.</p>
-                            <Link href="/signup" className="signup-link">Create Account</Link>
+                            <Link href={redirectTo !== '/' ? `/signup?redirect=${encodeURIComponent(redirectTo)}` : "/signup"} className="signup-link">Create Account</Link>
                         </div>
                         <p className="already-have-account">
                             Need help? <Link href="/contact">Contact Support</Link>

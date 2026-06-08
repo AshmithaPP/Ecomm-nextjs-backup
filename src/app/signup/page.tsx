@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { User, Mail, Lock, Phone, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import Image from 'next/image';
@@ -22,11 +22,19 @@ const signupSchema = z.object({
 
 type SignupFormData = z.infer<typeof signupSchema>;
 
-export default function SignupPage() {
+function SignupForm() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { signup } = useAuthStore();
+    const { signup, isAuthenticated } = useAuthStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get('redirect') || '/';
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            router.push(redirectTo);
+        }
+    }, [isAuthenticated, router, redirectTo]);
 
     const {
         register,
@@ -42,7 +50,7 @@ export default function SignupPage() {
         setIsLoading(false);
         if (result.success) {
             toast.success('Successfully created your account!');
-            router.push('/');
+            router.push(redirectTo);
         } else {
             toast.error(result.message || 'Registration failed. Please try again.');
         }
@@ -155,5 +163,17 @@ export default function SignupPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function SignupPage() {
+    return (
+        <Suspense fallback={
+            <div className="auth-page-wrapper d-flex align-items-center justify-content-center">
+                <div className="spinner"></div>
+            </div>
+        }>
+            <SignupForm />
+        </Suspense>
     );
 }

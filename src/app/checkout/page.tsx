@@ -433,7 +433,7 @@ const CheckoutPage = () => {
                                             />
                                             <span style={{ fontSize: '0.9rem' }}>Login to Account</span>
                                         </label>
-                                        <label className="d-flex align-items-center gap-2" style={{ cursor: 'pointer' }} onClick={() => router.push(`/register?redirect=/checkout`)}>
+                                        <label className="d-flex align-items-center gap-2" style={{ cursor: 'pointer' }} onClick={() => router.push(`/signup?redirect=/checkout`)}>
                                             <input 
                                                 type="radio" 
                                                 name="checkoutMode" 

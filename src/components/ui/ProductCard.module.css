@@ -11,12 +11,14 @@
 .productCard {
     width: 100%;
     max-width: 340px;
-    height: 515px; /* Compact unified layout card height to reduce vertical spacing */
+    height: 515px;
+    /* Compact unified layout card height to reduce vertical spacing */
     border-radius: 16px;
     overflow: hidden;
     background: #FFFFFF;
     border: 1px solid #EAEAEA;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Premium soft outside drop shadow matching mockup */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    /* Premium soft outside drop shadow matching mockup */
     transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     cursor: pointer;
     position: relative;
@@ -27,14 +29,16 @@
 
 .productCard:hover {
     transform: translateY(-8px);
-    border-color: #DE3E6B; /* High-end pink highlight matching the rating stars */
+    border-color: #DE3E6B;
+    /* High-end pink highlight matching the rating stars */
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 12px 24px rgba(222, 62, 107, 0.08);
 }
 
 .imageWrapper {
     position: relative;
     width: 100%;
-    height: 280px; /* Compact image height for a perfect aspect ratio */
+    height: 280px;
+    /* Compact image height for a perfect aspect ratio */
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -43,7 +47,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 1; /* Default to 1 to prevent white flash during initial page load */
+    opacity: 1;
+    /* Default to 1 to prevent white flash during initial page load */
     transform: scale(1);
     transition: opacity 0.5s ease-in-out, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -85,6 +90,7 @@
     from {
         transform: scale(1.12);
     }
+
     to {
         transform: scale(1);
     }
@@ -102,10 +108,12 @@
 }
 
 .discountBadge {
-    background: #A42829; /* High-end saree maroon */
+    background: #A42829;
+    /* High-end saree maroon */
     color: #FFFFFF;
     padding: 4px 10px;
-    border-radius: 40px; /* Pillow-shaped tags to match reference */
+    border-radius: 40px;
+    /* Pillow-shaped tags to match reference */
     font-family: 'Jost', sans-serif;
     font-weight: 600;
     font-size: 11px;
@@ -115,10 +123,12 @@
 }
 
 .featuredBadge {
-    background: #E8D8CD; /* Elegant warm sand/gold color */
+    background: #E8D8CD;
+    /* Elegant warm sand/gold color */
     color: #8C6A5C;
     padding: 4px 10px;
-    border-radius: 40px; /* Pillow-shaped tags to match reference */
+    border-radius: 40px;
+    /* Pillow-shaped tags to match reference */
     font-family: 'Jost', sans-serif;
     font-weight: 600;
     font-size: 11px;
@@ -168,25 +178,29 @@
 
 .productInfo {
     width: 100%;
-    flex-grow: 1; /* Automatically takes all remaining vertical space inside the compact card */
+    flex-grow: 1;
+    /* Automatically takes all remaining vertical space inside the compact card */
     padding: 12px 14px 14px 14px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Pushes the Add to Cart button to the absolute bottom of the card */
+    justify-content: space-between;
+    /* Pushes the Add to Cart button to the absolute bottom of the card */
     box-sizing: border-box;
 }
 
 .productDetailsGroup {
     display: flex;
     flex-direction: column;
-    gap: 7px; /* Elegant premium tight gap */
+    gap: 7px;
+    /* Elegant premium tight gap */
     width: 100%;
 }
 
 .productTitle {
     font-family: 'Jost', sans-serif;
     font-weight: 600;
-    font-size: 18px; /* Increased from 15px */
+    font-size: 18px;
+    /* Increased from 15px */
     line-height: 1.3;
     color: #111827;
     width: 100%;
@@ -229,10 +243,13 @@
 .discountTagPill {
     display: inline-flex;
     align-items: center;
-    background-color: #F3ECE7; /* Soft sand luxurious background */
-    color: #7A6153; /* Deep premium warm gold/bronze text */
+    background-color: #F3ECE7;
+    /* Soft sand luxurious background */
+    color: #7A6153;
+    /* Deep premium warm gold/bronze text */
     padding: 3px 8px;
-    border-radius: 4px; /* Crisp high-end pill style matching top brands */
+    border-radius: 4px;
+    /* Crisp high-end pill style matching top brands */
     font-family: 'Jost', sans-serif;
     font-weight: 600;
     font-size: 11px;
@@ -244,8 +261,10 @@
 .newArrivalPill {
     display: inline-flex;
     align-items: center;
-    background-color: #EAF4F0; /* Soft mint green background */
-    color: #2D7A5A; /* Deep teal text for a fresh premium feel */
+    background-color: #EAF4F0;
+    /* Soft mint green background */
+    color: #2D7A5A;
+    /* Deep teal text for a fresh premium feel */
     padding: 3px 8px;
     border-radius: 4px;
     font-family: 'Jost', sans-serif;
@@ -266,7 +285,8 @@
 .currentPrice {
     font-family: 'Jost', sans-serif;
     font-weight: 700;
-    font-size: 18px; /* Balanced current price font size */
+    font-size: 18px;
+    /* Balanced current price font size */
     color: #111827;
 }
 
@@ -307,7 +327,8 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 70px; /* Slightly taller for perfect layout space */
+    height: 70px;
+    /* Slightly taller for perfect layout space */
     background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -383,7 +404,8 @@
 /* ADD TO CART overlay button replica */
 .btnOverlayAddToCart {
     height: 42px;
-    background-color: #000000; /* Solid Black */
+    background-color: #000000;
+    /* Solid Black */
     color: #FFFFFF;
     border: none;
     border-radius: 4px;
@@ -426,7 +448,8 @@
 .productPriceContainerNew {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Centered for Home Page card overlay text */
+    align-items: center;
+    /* Centered for Home Page card overlay text */
     gap: 2px;
     margin-top: 4px;
     width: 100%;
@@ -553,9 +576,12 @@
 /* Premium Outlined Saree Maroon Add to Cart Button */
 .btnOverlayAddToCartNew {
     height: 38px;
-    background-color: #dabd66; /* Clean white background to make the grid feel light and premium */
-    color: #FFFFFF; /* Saree Maroon brand color text */
-    border: 1.5px solid #dabd66; /* High-end brand colored outline */
+    background-color: #dabd66;
+    /* Clean white background to make the grid feel light and premium */
+    color: #FFFFFF;
+    /* Saree Maroon brand color text */
+    border: 1.5px solid #dabd66;
+    /* High-end brand colored outline */
     border-radius: 8px;
     font-family: 'Jost', sans-serif;
     font-weight: 600;
@@ -573,8 +599,10 @@
 }
 
 .btnOverlayAddToCartNew:hover:not(:disabled) {
-    background-color: #dabd66; /* Fills beautifully with brand color on hover */
-    color: #FFFFFF; /* High-contrast white text */
+    background-color: #dabd66;
+    /* Fills beautifully with brand color on hover */
+    color: #FFFFFF;
+    /* High-contrast white text */
     box-shadow: 0 4px 12px rgba(164, 40, 41, 0.2);
     transform: translateY(-1px);
 }
