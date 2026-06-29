@@ -89,13 +89,13 @@ const MyOrders = () => {
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         if (order.tracking_id) {
-                                            window.open(order.tracking_url || 'https://www.stcourier.com/track/shipment', '_blank');
+                                            window.open(order.tracking_url || `https://shiprocket.co/tracking/${order.tracking_id}`, '_blank');
                                         } else {
                                             router.push(`/order-confirmation/${order.order_id}`);
                                         }
                                     }}
                                 >
-                                    {order.tracking_id ? 'Track Order ↗' : 'View Details'}
+                                    {order.tracking_id ? 'Open Shiprocket Tracking ↗' : 'View Details'}
                                 </button>
                             </div>
                         </div>

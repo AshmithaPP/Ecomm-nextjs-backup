@@ -373,7 +373,7 @@ const OrderConfirmationPage = () => {
                         disabled={!currentOrder.tracking_id}
                         onClick={() => {
                           if (currentOrder.tracking_id) {
-                            window.open(currentOrder.tracking_url || 'https://www.stcourier.com/track/shipment', '_blank');
+                            window.open(currentOrder.tracking_url || `https://shiprocket.co/tracking/${currentOrder.tracking_id}`, '_blank');
                           }
                         }}
                         style={{
@@ -394,7 +394,7 @@ const OrderConfirmationPage = () => {
                           transition: 'all 0.2s',
                         }}
                       >
-                        {currentOrder.tracking_id ? 'Track Order ↗' : 'Track Order (Available once shipped)'}
+                        {currentOrder.tracking_id ? 'Open Shiprocket Tracking ↗' : 'Track Order (Available once shipped)'}
                       </button>
 
                     </div>
