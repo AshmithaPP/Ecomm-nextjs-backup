@@ -14,6 +14,16 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: '/shop-product',
+        destination: '/collections/products',
+        permanent: true,
+      },
+      {
+        source: '/shop-products',
+        destination: '/collections/products',
+        permanent: true,
+      },
+      {
         source: '/products',
         destination: '/collections/products',
         permanent: true,
